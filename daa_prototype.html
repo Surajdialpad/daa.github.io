@@ -1,0 +1,1561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DAA Prototype – Unified Flow (19 Screens)</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f0f5; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
+
+    /* ── Role / Nav Bar ── */
+    #role-bar { height: 50px; background: #1e1b4b; display: flex; align-items: center; padding: 0 16px; gap: 4px; flex-shrink: 0; z-index: 100; }
+    .role-tab { padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.6); transition: all 0.15s; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+    .role-tab:hover { background: rgba(255,255,255,0.1); color: #fff; }
+    .role-tab.active { background: #7c3aed; color: #fff; }
+    .role-badge { background: rgba(255,255,255,0.2); color: #fff; font-size: 10px; padding: 1px 6px; border-radius: 10px; font-weight: 700; }
+    .role-tab.active .role-badge { background: rgba(255,255,255,0.3); }
+    #role-bar .sep { width: 1px; height: 24px; background: rgba(255,255,255,0.15); margin: 0 8px; }
+    .screen-nav { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+    .screen-counter { font-size: 11px; color: rgba(255,255,255,0.55); white-space: nowrap; min-width: 90px; text-align: right; }
+    .nav-arrow { width: 28px; height: 28px; border: 1px solid rgba(255,255,255,0.25); border-radius: 6px; background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: all 0.1s; }
+    .nav-arrow:hover:not(:disabled) { background: rgba(255,255,255,0.18); color: #fff; }
+    .nav-arrow:disabled { opacity: 0.3; cursor: not-allowed; }
+    .screen-role-pill { font-size: 11px; padding: 3px 10px; border-radius: 10px; font-weight: 600; white-space: nowrap; }
+    .pill-pm { background: rgba(167,139,250,0.2); color: #c4b5fd; }
+    .pill-ca { background: rgba(52,211,153,0.2); color: #6ee7b7; }
+
+    /* ── Screen Container ── */
+    #screen-area { flex: 1; overflow: hidden; position: relative; }
+    .screen { display: none; width: 100%; height: 100%; position: absolute; top: 0; left: 0; }
+    .screen.active { display: flex; }
+
+    /* ── UDP Portal Layout (Partner Manager) ── */
+    .app-layout { display: flex; width: 100%; height: 100%; background: #f9f9fb; }
+    .app-sidebar { width: 52px; background: #fff; border-right: 1px solid #e8e8ec; display: flex; flex-direction: column; align-items: center; padding: 12px 0; gap: 4px; flex-shrink: 0; }
+    .sl { width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, #e040fb, #7c3aed); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; }
+    .sl svg { width: 18px; height: 18px; fill: white; }
+    .si { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #9ca3af; }
+    .si:hover { background: #f3f4f6; color: #4b5563; }
+    .si.active { background: #f3f0ff; color: #7c3aed; }
+    .sb { margin-top: auto; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .av { width: 32px; height: 32px; border-radius: 50%; background: #d1d5db; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #6b7280; }
+    .app-main { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: #fff; }
+    .app-topbar { padding: 10px 24px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #e8e8ec; flex-shrink: 0; min-height: 44px; }
+    .tb-title { font-size: 13px; font-weight: 500; color: #374151; }
+    .tb-sp { flex: 1; }
+    .tb-badge { font-size: 11px; padding: 3px 8px; border-radius: 4px; background: #f3f0ff; color: #7c3aed; font-weight: 600; }
+    .app-content { flex: 1; overflow-y: auto; padding: 24px 28px; }
+    h1 { font-size: 20px; font-weight: 600; color: #111827; margin-bottom: 18px; }
+
+    /* ── CA Admin Portal Layout ── */
+    .ca-portal { display: flex; flex-direction: column; width: 100%; flex: 1; min-height: 0; background: #f9f9fb; }
+    .ca-nav { height: 48px; background: #5b21b6; display: flex; align-items: center; padding: 0 28px; flex-shrink: 0; }
+    .ca-nav-brand { display: flex; align-items: center; gap: 6px; }
+    .ca-nav-dp { font-size: 14px; font-weight: 700; color: #fff; }
+    .ca-nav-sep { font-size: 16px; font-weight: 200; color: rgba(255,255,255,0.35); margin: 0 4px; }
+    .ca-nav-product { font-size: 13px; font-weight: 400; color: rgba(255,255,255,0.8); }
+    .ca-nav-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+    .ca-nav-user { font-size: 12px; color: rgba(255,255,255,0.75); }
+    .ca-nav-av { width: 28px; height: 28px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #fff; }
+    .ca-content { flex: 1; min-height: 0; overflow-y: auto; padding: 28px 36px; }
+    .pam-hd { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 22px; gap: 20px; }
+    .pam-hd-left h1 { font-size: 20px; font-weight: 700; color: #111827; margin-bottom: 4px; margin: 0 0 4px; }
+    .pam-hd-left p { font-size: 13px; color: #6b7280; }
+    .pam-expire-note { background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 10px 14px; font-size: 12px; color: #92400e; white-space: nowrap; flex-shrink: 0; }
+    .pam-tabs-row { display: flex; align-items: center; border-bottom: 1px solid #e5e7eb; margin-bottom: 18px; }
+    .pam-tabs-row .tab { margin-bottom: -1px; }
+    .pam-search { margin-left: auto; }
+
+    /* ── Toolbar ── */
+    .toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+    .search-box { display: flex; align-items: center; gap: 6px; border: 1px solid #d1d5db; border-radius: 8px; padding: 6px 12px; background: #fff; width: 220px; }
+    .search-box input { border: none; outline: none; font-size: 13px; color: #374151; width: 100%; background: transparent; }
+    .sp { flex: 1; }
+    .btn { display: inline-flex; align-items: center; gap: 6px; border-radius: 8px; padding: 8px 16px; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; border: none; }
+    .btn-primary { background: #7c3aed; color: #fff; }
+    .btn-primary:hover { background: #6d28d9; }
+    .btn-secondary { background: #fff; color: #374151; border: 1px solid #e5e7eb; }
+    .btn-secondary:hover { background: #f9fafb; }
+    .btn-danger { background: #dc2626; color: #fff; }
+    .btn-danger:hover { background: #b91c1c; }
+    .btn-sm { padding: 5px 12px !important; font-size: 12px !important; }
+    button:disabled { opacity: 0.45; cursor: not-allowed !important; }
+
+    /* ── Table ── */
+    .table-wrap { border: 1px solid #e5e7eb; border-radius: 10px; overflow: hidden; }
+    table { width: 100%; border-collapse: collapse; }
+    thead tr { background: #f9fafb; border-bottom: 1px solid #e5e7eb; }
+    th { padding: 9px 14px; font-size: 11px; font-weight: 600; color: #6b7280; text-align: left; white-space: nowrap; }
+    tbody tr { border-bottom: 1px solid #f3f4f6; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #fafafa; }
+    td { padding: 11px 14px; font-size: 13px; color: #374151; }
+    .co-link { color: #7c3aed; text-decoration: none; font-weight: 500; }
+    .badge-yours { display: inline-flex; align-items: center; padding: 2px 7px; border-radius: 4px; font-size: 10px; font-weight: 500; margin-left: 5px; background: #f3f4f6; color: #6b7280; }
+    .sku { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; background: #f3f4f6; color: #374151; border: 1px solid #e5e7eb; }
+    .status { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 500; }
+    .sd { width: 5px; height: 5px; border-radius: 50%; }
+    .s-active { background: #ecfdf5; color: #059669; } .s-active .sd { background: #10b981; }
+    .s-pending { background: #fffbeb; color: #d97706; } .s-pending .sd { background: #f59e0b; }
+    .s-revoked { background: #fef2f2; color: #dc2626; } .s-revoked .sd { background: #ef4444; }
+    .exp-unlimited { font-size: 13px; color: #9ca3af; font-style: italic; }
+    .exp-na { font-size: 15px; color: #d1d5db; }
+    .exp-date { font-size: 13px; color: #374151; }
+    .exp-days { font-size: 11px; color: #9ca3af; margin-left: 4px; }
+    .exp-warn { font-size: 13px; color: #d97706; font-weight: 500; }
+    .exp-revoked { font-size: 13px; color: #ef4444; }
+    .sk { height: 11px; border-radius: 5px; background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    .sk-s { width: 55px; } .sk-m { width: 90px; } .sk-l { width: 130px; }
+    .tfoot { display: flex; align-items: center; justify-content: space-between; padding: 11px 14px; border-top: 1px solid #e5e7eb; background: #fff; }
+    .show-ctrl { display: flex; align-items: center; gap: 7px; font-size: 13px; color: #6b7280; }
+    .show-ctrl select { border: 1px solid #d1d5db; border-radius: 5px; padding: 3px 6px; font-size: 12px; }
+    .pg { display: flex; align-items: center; gap: 4px; font-size: 12px; color: #6b7280; }
+    .pg-info { margin-right: 6px; }
+    .pg-btn { width: 26px; height: 26px; border: 1px solid #e5e7eb; border-radius: 5px; background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #6b7280; }
+    .pg-btn.active { background: #7c3aed; color: #fff; border-color: #7c3aed; font-weight: 600; }
+
+    /* Partner Details cell */
+    .pd-cell { display: flex; align-items: center; gap: 10px; }
+    .pd-logo { width: 32px; height: 32px; border-radius: 8px; background: #f3f0ff; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #7c3aed; font-size: 13px; flex-shrink: 0; }
+    .pd-name { font-size: 13px; font-weight: 600; color: #111827; }
+    .pd-meta { font-size: 11px; color: #6b7280; margin-top: 1px; }
+    .pd-cert { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: #059669; font-weight: 500; }
+    .td-actions { display: flex; gap: 6px; align-items: center; }
+    .org-group-hd td { background: #f9fafb; padding: 7px 14px; font-size: 11px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1px solid #e5e7eb; }
+    .role-badge { font-size: 10px; border-radius: 4px; padding: 2px 7px; font-weight: 600; white-space: nowrap; }
+    .rb-pm { background: #f3f0ff; color: #7c3aed; }
+    .rb-pu { background: #f0fdf4; color: #15803d; }
+    .user-pick-list { border: 1px solid #e5e7eb; border-radius: 8px; max-height: 200px; overflow-y: auto; margin-bottom: 16px; }
+    .user-pick-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid #f3f4f6; cursor: pointer; }
+    .user-pick-item:last-child { border-bottom: none; }
+    .user-pick-item:hover { background: #f9fafb; }
+    .upi-info { flex: 1; }
+    .upi-name { font-size: 13px; font-weight: 600; color: #111827; }
+    .upi-email { font-size: 11px; color: #6b7280; }
+    .domain-note { font-size: 11px; color: #6b7280; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 8px 12px; margin-bottom: 16px; }
+
+    /* ── Tabs ── */
+    .tabs { display: flex; border-bottom: 1px solid #e5e7eb; margin-bottom: 18px; }
+    .tab { padding: 9px 18px; font-size: 13px; font-weight: 500; color: #6b7280; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+    .tab.active { color: #7c3aed; border-bottom-color: #7c3aed; }
+    .tab-n { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 50%; font-size: 10px; font-weight: 700; margin-left: 5px; background: #f3f0ff; color: #7c3aed; }
+    .tab.active .tab-n { background: #7c3aed; color: #fff; }
+
+    /* ── Banners ── */
+    .banner { border-radius: 8px; padding: 11px 14px; font-size: 13px; margin-bottom: 14px; display: flex; align-items: flex-start; gap: 10px; line-height: 1.5; }
+    .banner-info { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; }
+    .banner-warn { background: #fffbeb; border: 1px solid #fde68a; color: #92400e; }
+    .banner-danger { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
+
+    /* ── Modal ── */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 200; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: #fff; border-radius: 14px; padding: 26px; width: 460px; max-width: 95vw; box-shadow: 0 20px 60px rgba(0,0,0,0.18); position: relative; }
+    .modal-close { position: absolute; top: 14px; right: 14px; width: 26px; height: 26px; border: none; background: none; cursor: pointer; color: #9ca3af; border-radius: 6px; display: flex; align-items: center; justify-content: center; }
+    .modal-close:hover { background: #f3f4f6; color: #374151; }
+    .modal h2 { font-size: 16px; font-weight: 700; color: #111827; margin-bottom: 5px; }
+    .modal-sub { font-size: 13px; color: #6b7280; margin-bottom: 18px; line-height: 1.5; }
+    .modal label { display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 6px; }
+    .modal-footer { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
+    .btn-cancel { padding: 8px 18px; border: 1px solid #e5e7eb; border-radius: 8px; background: #fff; font-size: 13px; font-weight: 500; color: #374151; cursor: pointer; }
+    .btn-cancel:hover { background: #f9fafb; }
+    .btn-confirm { padding: 8px 18px; border: none; border-radius: 8px; background: #7c3aed; color: #fff; font-size: 13px; font-weight: 500; cursor: pointer; }
+    .btn-confirm:hover { background: #6d28d9; }
+    .btn-confirm-danger { padding: 8px 18px; border: none; border-radius: 8px; background: #dc2626; color: #fff; font-size: 13px; font-weight: 500; cursor: pointer; }
+    .btn-confirm-danger:hover { background: #b91c1c; }
+
+    /* Company dropdown in modal */
+    .dd-wrap { position: relative; margin-bottom: 18px; }
+    .dd-trigger { width: 100%; padding: 9px 12px; border: 1.5px solid #7c3aed; border-radius: 8px; display: flex; align-items: center; gap: 8px; cursor: pointer; background: #fff; font-size: 13px; color: #111827; }
+    .dd-chevron { margin-left: auto; color: #9ca3af; }
+    .dd-menu { display: none; position: absolute; top: calc(100% + 3px); left: 0; right: 0; background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.12); z-index: 10; overflow: hidden; }
+    .dd-menu.open { display: block; }
+    .dd-search { padding: 7px; border-bottom: 1px solid #f3f4f6; }
+    .dd-search input { width: 100%; border: 1px solid #e5e7eb; border-radius: 6px; padding: 6px 10px 6px 30px; font-size: 13px; outline: none; background: #f9fafb url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' fill='none' stroke='%239ca3af' stroke-width='2' viewBox='0 0 24 24'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E") no-repeat 9px center; }
+    .dd-option { display: flex; align-items: center; gap: 9px; padding: 9px 12px; cursor: pointer; font-size: 13px; }
+    .dd-option:hover { background: #f5f3ff; }
+    .dd-option.sel { background: #f5f3ff; }
+    .dd-oi { width: 28px; height: 28px; border-radius: 6px; background: #f3f0ff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: #7c3aed; }
+    .dd-name { font-weight: 500; color: #111827; }
+    .dd-sub { font-size: 11px; color: #9ca3af; }
+
+    /* Legal / T&C box */
+    .legal-box { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px 14px; font-size: 12px; color: #374151; line-height: 1.65; margin-bottom: 14px; max-height: 140px; overflow-y: auto; }
+    .check-row { display: flex; align-items: flex-start; gap: 9px; margin-bottom: 14px; cursor: pointer; }
+    .check-row input { width: 15px; height: 15px; accent-color: #7c3aed; cursor: pointer; flex-shrink: 0; margin-top: 1px; }
+    .check-row span { font-size: 13px; color: #374151; }
+
+    /* Form elements */
+    .form-select { width: 100%; padding: 9px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 13px; color: #111827; background: #fff; outline: none; margin-bottom: 16px; cursor: pointer; }
+    .form-select:focus { border-color: #7c3aed; box-shadow: 0 0 0 2px rgba(124,58,237,0.12); }
+    .form-textarea { width: 100%; border: 1px solid #e5e7eb; border-radius: 8px; padding: 9px 12px; font-size: 13px; color: #374151; outline: none; resize: vertical; min-height: 72px; font-family: inherit; }
+    .form-textarea:focus { border-color: #7c3aed; }
+
+    /* Note boxes */
+    .note-box { border-radius: 8px; padding: 11px 14px; font-size: 12px; line-height: 1.6; margin-bottom: 14px; }
+    .note-info { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
+    .note-warn { background: #fffbeb; border: 1px solid #fde68a; color: #92400e; }
+    .note-crit { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
+    .note-title { font-weight: 700; margin-bottom: 3px; }
+
+    /* ── Toast ── */
+    .toast { display: none; position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #111827; color: #fff; padding: 11px 18px; border-radius: 8px; font-size: 13px; z-index: 400; gap: 8px; align-items: center; box-shadow: 0 4px 16px rgba(0,0,0,0.22); white-space: nowrap; }
+    .toast.show { display: flex; }
+    .toast-icon { color: #34d399; }
+
+    /* ── Login Page ── */
+    .login-split { display: flex; width: 100%; height: 100%; }
+    .login-left { flex: 1; display: flex; align-items: center; justify-content: center; background: #fff; padding: 40px; overflow-y: auto; }
+    .login-form-wrap { width: 360px; max-width: 100%; }
+    .login-h { font-size: 28px; font-weight: 700; color: #7c3aed; margin-bottom: 28px; text-align: center; }
+    .login-sso-btn { width: 100%; display: flex; align-items: center; gap: 10px; border: 1.5px solid #e5e7eb; border-radius: 50px; padding: 11px 20px; background: #fff; font-size: 14px; font-weight: 600; color: #374151; cursor: pointer; margin-bottom: 10px; }
+    .login-sso-btn:hover { background: #f9fafb; }
+    .login-sso-icon { width: 20px; height: 20px; flex-shrink: 0; }
+    .login-divider { display: flex; align-items: center; gap: 10px; margin: 18px 0; color: #9ca3af; font-size: 11px; letter-spacing: 0.8px; }
+    .login-divider::before, .login-divider::after { content: ''; flex: 1; height: 1px; background: #e5e7eb; }
+    .login-field-label { font-size: 11px; font-weight: 600; color: #6b7280; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 6px; display: block; }
+    .login-input { width: 100%; border: 1.5px solid #e5e7eb; border-radius: 12px; padding: 12px 14px; font-size: 14px; color: #111827; outline: none; margin-bottom: 16px; background: #f9fafb; }
+    .login-input:focus { border-color: #7c3aed; background: #fff; }
+    .login-btn { width: 100%; padding: 13px; background: #7c3aed; color: #fff; border: none; border-radius: 50px; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 4px; margin-bottom: 14px; }
+    .login-btn:hover { background: #6d28d9; }
+    .login-btn:disabled { background: #c4b5fd; cursor: not-allowed; }
+    .login-forgot { display: block; text-align: center; font-size: 13px; color: #7c3aed; text-decoration: none; font-weight: 500; }
+    .login-forgot:hover { text-decoration: underline; }
+    .login-right { width: 42%; background: linear-gradient(155deg, #3b0764 0%, #6d28d9 35%, #c026d3 70%, #f97316 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; position: relative; overflow: hidden; }
+    .login-right-logo { display: flex; align-items: center; gap: 12px; }
+    .login-dp-star { font-size: 52px; color: #fff; line-height: 1; }
+    .login-dp-name { font-size: 44px; font-weight: 700; color: #fff; letter-spacing: -1px; }
+    .login-right-foot { position: absolute; bottom: 20px; right: 24px; font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.8); display: flex; align-items: center; gap: 5px; }
+
+    /* T&C modal (shown on first login) */
+    .login-tc-box { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px 14px; font-size: 12px; color: #374151; line-height: 1.65; margin-bottom: 14px; max-height: 120px; overflow-y: auto; }
+
+    /* ── Email Layout ── */
+    .email-layout { display: flex; width: 100%; height: 100%; background: #e8e8f0; align-items: center; justify-content: center; overflow: auto; padding: 20px; }
+    .email-frame { background: #fff; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.1); width: 580px; max-width: 100%; overflow: hidden; }
+    .email-chrome { background: #f3f4f6; border-bottom: 1px solid #e5e7eb; padding: 10px 14px; }
+    .ec-dots { display: flex; gap: 5px; margin-bottom: 7px; }
+    .ec-dot { width: 9px; height: 9px; border-radius: 50%; }
+    .ec-r { background: #ef4444; } .ec-y { background: #f59e0b; } .ec-g { background: #10b981; }
+    .ec-bar { background: #fff; border-radius: 5px; padding: 5px 10px; font-size: 11px; color: #6b7280; }
+    .email-head { padding: 12px 18px; border-bottom: 1px solid #f3f4f6; }
+    .email-from { font-size: 11px; color: #9ca3af; margin-bottom: 2px; }
+    .email-subject { font-size: 14px; font-weight: 600; color: #111827; margin-bottom: 4px; }
+    .email-meta { font-size: 11px; color: #9ca3af; }
+    /* Plain email header — replaces gradient banner */
+    .email-plain-hd { padding: 20px 28px 16px; text-align: center; border-bottom: 1px solid #f3f4f6; }
+    .eph-logo { display: inline-flex; align-items: center; gap: 9px; }
+    .eph-mark { width: 30px; height: 30px; border-radius: 7px; background: linear-gradient(135deg, #7c3aed, #5b21b6); display: flex; align-items: center; justify-content: center; }
+    .eph-mark svg { fill: white; width: 16px; height: 16px; }
+    .eph-name { font-size: 17px; font-weight: 700; color: #1a1a2e; }
+    .email-body { padding: 22px 28px; font-size: 13px; color: #374151; line-height: 1.7; }
+    .email-body p { margin-bottom: 12px; }
+    .email-body h2 { font-size: 18px; font-weight: 700; color: #111827; margin-bottom: 14px; }
+    .email-cta { text-align: center; margin: 20px 0; }
+    .email-btn { display: inline-block; padding: 11px 28px; background: #7c3aed; color: #fff; border-radius: 8px; font-size: 13px; font-weight: 600; text-decoration: none; }
+    .email-btn-danger { background: #dc2626 !important; }
+    .email-info { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px 16px; margin: 14px 0; font-size: 12px; }
+    .ei-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #f3f4f6; }
+    .ei-row:last-child { border-bottom: none; }
+    .ei-k { color: #9ca3af; }
+    .ei-v { font-weight: 500; color: #111827; }
+    .email-foot { padding: 12px 28px; background: #f9fafb; border-top: 1px solid #f3f4f6; text-align: center; font-size: 10px; color: #9ca3af; }
+    .email-foot a { color: #7c3aed; text-decoration: none; }
+    .email-cta-pair { display: flex; gap: 10px; justify-content: center; margin: 20px 0; }
+
+    /* ── Screen label ── */
+    .slabel { position: fixed; bottom: 8px; right: 8px; font-size: 9px; font-family: monospace; background: rgba(0,0,0,0.5); color: rgba(255,255,255,0.75); padding: 3px 7px; border-radius: 4px; z-index: 999; pointer-events: none; }
+    svg { flex-shrink: 0; }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════ ROLE / NAV BAR ══════════════ -->
+<div id="role-bar">
+  <div class="role-tab active" id="tab-all" onclick="switchView('all')">
+    All Screens <span class="role-badge" id="badge-all">19</span>
+  </div>
+  <div class="role-tab" id="tab-pm" onclick="switchView('pm')">
+    <span class="screen-role-pill pill-pm">●</span> Partner Manager <span class="role-badge" id="badge-pm">11</span>
+  </div>
+  <div class="role-tab" id="tab-ca" onclick="switchView('ca')">
+    <span class="screen-role-pill pill-ca">●</span> Customer Admin <span class="role-badge" id="badge-ca">8</span>
+  </div>
+  <div class="sep"></div>
+  <div class="screen-nav">
+    <span class="screen-counter" id="screen-counter">Screen 1 of 19</span>
+    <button class="nav-arrow" id="prev-btn" onclick="prevScreen()" disabled>‹</button>
+    <button class="nav-arrow" id="next-btn" onclick="nextScreen()">›</button>
+  </div>
+</div>
+
+<!-- ══════════════ SCREEN AREA ══════════════ -->
+<div id="screen-area">
+
+
+<!-- ─────────────────────────────────────────── -->
+<!-- PM-1 · Welcome Email                        -->
+<!-- ─────────────────────────────────────────── -->
+<div id="screen-pm-1" class="screen active" data-role="pm" data-title="Welcome Email">
+  <div class="email-layout">
+    <div class="email-frame">
+      <div class="email-chrome">
+        <div class="ec-dots"><div class="ec-dot ec-r"></div><div class="ec-dot ec-y"></div><div class="ec-dot ec-g"></div></div>
+        <div class="ec-bar">Welcome to Dialpad's Certified Delivery Portal</div>
+      </div>
+      <div class="email-head">
+        <div class="email-from">From: Dialpad &lt;no-reply@dialpad.com&gt;</div>
+        <div class="email-subject">Welcome to Dialpad's Certified Delivery Portal</div>
+        <div class="email-meta">To: alex.chen@aerolabs.com &nbsp;·&nbsp; Jun 18, 2026</div>
+      </div>
+      <div class="email-plain-hd">
+        <div class="eph-logo">
+          <div class="eph-mark"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg></div>
+          <span class="eph-name">Dialpad</span>
+        </div>
+      </div>
+      <div class="email-body">
+        <h2>Welcome to the Certified Delivery Portal</h2>
+        <p>Hi <strong>Alex</strong>,</p>
+        <p>You have been successfully activated as a <strong>Certified Partner Manager</strong> on Dialpad's Unified Delivery Portal (UDP). You can now request delegated admin access to your managed customers' Dialpad accounts to provide support and configuration on their behalf.</p>
+        <p>With Delegated Account Access (DAA), your customers retain full control — they must approve every access request, and they can revoke access at any time.</p>
+        <div class="email-info">
+          <div class="ei-row"><span class="ei-k">Portal</span><span class="ei-v">Unified Delivery Portal (UDP)</span></div>
+          <div class="ei-row"><span class="ei-k">Your Role</span><span class="ei-v">Certified Partner Manager — Aerolabs</span></div>
+          <div class="ei-row"><span class="ei-k">Feature Enabled</span><span class="ei-v">Delegated Account Access (DAA)</span></div>
+        </div>
+        <div class="email-cta">
+          <a href="#" class="email-btn" onclick="goToScreen('pm',2);return false;">Access the Portal →</a>
+        </div>
+        <p style="font-size:12px;color:#9ca3af;">If you didn't expect this invitation, please contact your Dialpad account manager.</p>
+      </div>
+      <div class="email-foot">© 2026 Dialpad, Inc. · San Ramon, CA &nbsp;·&nbsp; <a href="#">Unsubscribe</a></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─────────────────────────────────────────── -->
+<!-- PM-2 · Login (+ T&C modal on first login)   -->
+<!-- ─────────────────────────────────────────── -->
+<div id="screen-pm-2" class="screen" data-role="pm" data-title="Login">
+  <div class="login-split">
+    <!-- Left: login form -->
+    <div class="login-left">
+      <div class="login-form-wrap">
+        <div class="login-h">Log in</div>
+
+        <button class="login-sso-btn">
+          <!-- Google G icon -->
+          <svg class="login-sso-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          Log in with Google
+        </button>
+        <button class="login-sso-btn">
+          <!-- Microsoft icon -->
+          <svg class="login-sso-icon" viewBox="0 0 24 24"><rect x="1" y="1" width="10" height="10" fill="#f25022"/><rect x="13" y="1" width="10" height="10" fill="#7fba00"/><rect x="1" y="13" width="10" height="10" fill="#00a4ef"/><rect x="13" y="13" width="10" height="10" fill="#ffb900"/></svg>
+          Log in with Microsoft
+        </button>
+
+        <div class="login-divider">OR USE YOUR EMAIL ADDRESS</div>
+
+        <label class="login-field-label" for="pm2-email">Work Email</label>
+        <input id="pm2-email" class="login-input" type="email" value="alex.chen@aerolabs.com" />
+
+        <label class="login-field-label" for="pm2-pass">Password</label>
+        <input id="pm2-pass" class="login-input" type="password" value="••••••••••" />
+
+        <button class="login-btn" onclick="document.getElementById('pm2-tc-modal').classList.add('open')">Log in</button>
+        <a href="#" class="login-forgot">Forgot password?</a>
+      </div>
+    </div>
+
+    <!-- Right: gradient brand panel -->
+    <div class="login-right">
+      <div class="login-right-logo">
+        <span class="login-dp-star">✦</span>
+        <span class="login-dp-name">dialpad</span>
+      </div>
+      <div class="login-right-foot">Not a customer? Sign up here &nbsp;↗</div>
+    </div>
+  </div>
+
+  <!-- T&C modal — shown on first login -->
+  <div class="modal-overlay" id="pm2-tc-modal">
+    <div class="modal">
+      <button class="modal-close" onclick="document.getElementById('pm2-tc-modal').classList.remove('open')"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      <h2>Accept Terms of Service</h2>
+      <p class="modal-sub">Before accessing the Certified Delivery Portal for the first time, please review and accept the terms below.</p>
+      <div class="login-tc-box">
+        By accessing the Certified Delivery Portal, you warrant that you have received approval from managed customers for the administration of their accounts. You agree to use access solely for authorised support and configuration activities, maintain strict confidentiality of all customer data, not share or sub-delegate credentials under any circumstances, and comply with all applicable data protection regulations including GDPR and CCPA. Dialpad reserves the right to audit access activity and revoke portal access if these terms are violated. <a href="#" style="color:#7c3aed;">View full terms →</a>
+      </div>
+      <label class="check-row" for="pm2-tc">
+        <input type="checkbox" id="pm2-tc" onchange="document.getElementById('pm2-tc-btn').disabled=!this.checked" />
+        <span>I have read and agree to the Dialpad Certified Delivery Portal Terms of Service.</span>
+      </label>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="document.getElementById('pm2-tc-modal').classList.remove('open')">Cancel</button>
+        <button class="btn-confirm" id="pm2-tc-btn" disabled onclick="document.getElementById('pm2-tc-modal').classList.remove('open');goToScreen('pm',3)">Accept and Continue</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─────────────────────────────────────────── -->
+<!-- PM-3 · Companies List (initial)             -->
+<!-- ─────────────────────────────────────────── -->
+<div id="screen-pm-3" class="screen" data-role="pm" data-title="Companies List">
+  <div class="app-layout">
+    <div class="app-sidebar">
+      <div class="sl"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg></div>
+      <div class="si active"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg></div>
+      <div class="si"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg></div>
+      <div class="si"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+      <div class="sb"><div class="av">AC</div></div>
+    </div>
+    <div class="app-main">
+      <div class="app-topbar">
+        <span class="tb-title">UDP — Partner Portal</span>
+        <span class="tb-sp"></span>
+        <span class="tb-badge">Aerolabs Partner</span>
+      </div>
+      <div class="app-content">
+        <h1>Companies</h1>
+        <div class="toolbar">
+          <div class="search-box"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Search by Name" /></div>
+          <div class="sp"></div>
+          <button class="btn btn-primary" onclick="document.getElementById('pm3-step1-modal').classList.add('open')">
+            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Request New Access
+          </button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Company Name</th><th># of Users</th><th># of Offices</th><th>SKU</th><th>Licenses</th><th>Access Status</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><a class="co-link">Aerolabs</a><span class="badge-yours">Your company</span></td>
+                <td>340</td><td>23</td><td><span class="sku">Pro</span></td>
+                <td>340 (0 available)</td>
+                <td><span class="status s-active"><span class="sd"></span>Active</span></td>
+              </tr>
+              <tr><td><div class="sk sk-l"></div></td><td><div class="sk sk-s"></div></td><td><div class="sk sk-s"></div></td><td><div class="sk sk-m"></div></td><td><div class="sk sk-m"></div></td><td><div class="sk sk-m"></div></td></tr>
+              <tr><td><div class="sk sk-m"></div></td><td><div class="sk sk-s"></div></td><td><div class="sk sk-s"></div></td><td><div class="sk sk-m"></div></td><td><div class="sk sk-m"></div></td><td><div class="sk sk-m"></div></td></tr>
+              <tr><td><div class="sk sk-l"></div></td><td><div class="sk sk-s"></div></td><td><div class="sk sk-s"></div></td><td><div class="sk sk-m"></div></td><td><div class="sk sk-m"></div></td><td><div class="sk sk-m"></div></td></tr>
+              <tr><td><div class="sk sk-s"></div></td><td><div class="sk sk-s"></div></td><td><div class="sk sk-s"></div></td><td><div class="sk sk-m"></div></td><td><div class="sk sk-m"></div></td><td><div class="sk sk-m"></div></td></tr>
+            </tbody>
+          </table>
+          <div class="tfoot"><div class="show-ctrl">Show <select><option>25</option><option>50</option></select></div><div class="pg"><span class="pg-info">Showing 1–25 from 1</span><button class="pg-btn">‹</button><button class="pg-btn active">1</button><button class="pg-btn">›</button></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Step 1 modal (inline on PM-3) -->
+  <div class="modal-overlay" id="pm3-step1-modal">
+    <div class="modal">
+      <button class="modal-close" onclick="document.getElementById('pm3-step1-modal').classList.remove('open')"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      <h2>Request Customer Access</h2>
+      <p class="modal-sub">Step 1 of 2 — Select the customer company to initiate a Delegated Account Access (DAA) request.</p>
+      <label>Select Customer Company</label>
+      <div class="dd-wrap">
+        <div id="pm3-trigger" class="dd-trigger" onclick="toggleDropdown('pm3-trigger','pm3-menu')" style="cursor:pointer;">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+          <span>Innovatech Solutions</span>
+          <svg class="dd-chevron" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div id="pm3-menu" class="dd-menu">
+          <div class="dd-search"><input type="text" placeholder="Search companies..." onclick="event.stopPropagation()" /></div>
+          <div class="dd-option sel" onclick="selectDdOption('pm3-menu','pm3-trigger','Innovatech Solutions','innovatech.io')">
+            <div class="dd-oi"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg></div>
+            <div><div class="dd-name">Innovatech Solutions</div><div class="dd-sub">innovatech.io</div></div>
+          </div>
+          <div class="dd-option" onclick="selectDdOption('pm3-menu','pm3-trigger','Blue Sky Solutions','bluesky.io')">
+            <div class="dd-oi"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg></div>
+            <div><div class="dd-name">Blue Sky Solutions</div><div class="dd-sub">bluesky.io</div></div>
+          </div>
+          <div class="dd-option" onclick="selectDdOption('pm3-menu','pm3-trigger','TechCorp Inc','techcorp.com')">
+            <div class="dd-oi"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg></div>
+            <div><div class="dd-name">TechCorp Inc</div><div class="dd-sub">techcorp.com</div></div>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="document.getElementById('pm3-step1-modal').classList.remove('open');document.getElementById('pm3-step2-modal').classList.add('open')">
+        Next Step
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+    </div>
+  </div>
+  <!-- Step 2 modal (inline on PM-3) -->
+  <div class="modal-overlay" id="pm3-step2-modal">
+    <div class="modal">
+      <button class="modal-close" onclick="document.getElementById('pm3-step2-modal').classList.remove('open')"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      <h2>Legal Acceptance</h2>
+      <p class="modal-sub">Step 2 of 2 — Review the access terms for <strong>Innovatech Solutions</strong>.</p>
+      <div class="legal-box">
+        In requesting Delegated Account Access (DAA) for <strong>Innovatech Solutions</strong>, I acknowledge that I am seeking permission to manage their account configuration, perform troubleshooting, and communicate with Dialpad on their behalf. I understand that access is only granted upon explicit customer approval and may be revoked by the customer admin at any time. I agree to manage the account strictly in accordance with the customer's directions and assume full responsibility for all administrative actions performed under my credentials.
+      </div>
+      <label class="check-row" for="pm3-tc">
+        <input type="checkbox" id="pm3-tc" onchange="document.getElementById('pm3-submit-btn').disabled=!this.checked" />
+        <span>I have read and agree to the access terms for this request.</span>
+      </label>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="document.getElementById('pm3-step2-modal').classList.remove('open');document.getElementById('pm3-step1-modal').classList.add('open')">Back</button>
+        <button class="btn-confirm" id="pm3-submit-btn" disabled onclick="pm5Submit()">Accept &amp; Send Request</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─────────────────────────────────────────── -->
+<!-- PM-4 · Request Access — Step 1              -->
+<!-- ─────────────────────────────────────────── -->
+<div id="screen-pm-4" class="screen" data-role="pm" data-title="Request Access — Step 1">
+  <div class="app-layout">
+    <div class="app-sidebar">
+      <div class="sl"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg></div>
+      <div class="si active"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg></div>
+      <div class="sb"><div class="av">AC</div></div>
+    </div>
+    <div class="app-main">
+      <div class="app-topbar"><span class="tb-title">UDP — Partner Portal</span><span class="tb-sp"></span><span class="tb-badge">Aerolabs Partner</span></div>
+      <div class="app-content">
+        <h1>Companies</h1>
+        <div class="toolbar">
+          <div class="search-box"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Search by Name" /></div>
+          <div class="sp"></div>
+          <button class="btn btn-primary">+ Request New Access</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Company Name</th><th># of Users</th><th># of Offices</th><th>SKU</th><th>Licenses</th><th>Access Status</th></tr></thead>
+            <tbody>
+              <tr><td><a class="co-link">Aerolabs</a><span class="badge-yours">Your company</span></td><td>340</td><td>23</td><td><span class="sku">Pro</span></td><td>340 (0 available)</td><td><span class="status s-active"><span class="sd"></span>Active</span></td></tr>
+            </tbody>
+          </table>
+          <div class="tfoot"><div class="show-ctrl">Show <select><option>25</option></select></div><div class="pg"><span class="pg-info">Showing 1–1</span><button class="pg-btn active">1</button></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Step 1 Modal -->
+  <div class="modal-overlay open">
+    <div class="modal">
+      <button class="modal-close" onclick="goToScreen('pm',3)"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      <h2>Request Customer Access</h2>
+      <p class="modal-sub">Step 1 of 2 — Select the customer company to initiate a Delegated Account Access (DAA) request.</p>
+      <label>Select Customer Company</label>
+      <div class="dd-wrap">
+        <div id="pm4-trigger" class="dd-trigger" onclick="toggleDropdown('pm4-trigger','pm4-menu')" style="cursor:pointer;">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+          <span>Innovatech Solutions</span>
+          <svg class="dd-chevron" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div id="pm4-menu" class="dd-menu">
+          <div class="dd-search"><input type="text" placeholder="Search companies..." onclick="event.stopPropagation()" /></div>
+          <div class="dd-option sel" onclick="selectDdOption('pm4-menu','pm4-trigger','Innovatech Solutions','innovatech.io')">
+            <div class="dd-oi"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg></div>
+            <div><div class="dd-name">Innovatech Solutions</div><div class="dd-sub">innovatech.io</div></div>
+          </div>
+          <div class="dd-option" onclick="selectDdOption('pm4-menu','pm4-trigger','Blue Sky Solutions','bluesky.io')">
+            <div class="dd-oi"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg></div>
+            <div><div class="dd-name">Blue Sky Solutions</div><div class="dd-sub">bluesky.io</div></div>
+          </div>
+          <div class="dd-option" onclick="selectDdOption('pm4-menu','pm4-trigger','TechCorp Inc','techcorp.com')">
+            <div class="dd-oi"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg></div>
+            <div><div class="dd-name">TechCorp Inc</div><div class="dd-sub">techcorp.com</div></div>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="goToScreen('pm',5)">
+        Next Step
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─────────────────────────────────────────── -->
+<!-- PM-5 · Request Access — Step 2 (Legal)      -->
+<!-- ─────────────────────────────────────────── -->
+<div id="screen-pm-5" class="screen" data-role="pm" data-title="Legal Acceptance">
+  <div class="app-layout">
+    <div class="app-sidebar">
+      <div class="sl"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg></div>
+      <div class="si active"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg></div>
+      <div class="sb"><div class="av">AC</div></div>
+    </div>
+    <div class="app-main">
+      <div class="app-topbar"><span class="tb-title">UDP — Partner Portal</span><span class="tb-sp"></span><span class="tb-badge">Aerolabs Partner</span></div>
+      <div class="app-content"><h1>Companies</h1></div>
+    </div>
+  </div>
+  <!-- Step 2 Modal -->
+  <div class="modal-overlay open">
+    <div class="modal">
+      <button class="modal-close" onclick="goToScreen('pm',4)"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      <h2>Legal Acceptance</h2>
+      <p class="modal-sub">Step 2 of 2 — Review the access terms for <strong>Innovatech Solutions</strong>.</p>
+      <div class="legal-box">
+        In requesting Delegated Account Access (DAA) for <strong>Innovatech Solutions</strong>, I acknowledge that I am seeking permission to manage their account configuration, perform troubleshooting, and communicate with Dialpad on their behalf. I understand that access is only granted upon explicit customer approval and may be revoked by the customer admin at any time. I agree to manage the account strictly in accordance with the customer's directions and assume full responsibility for all administrative actions performed under my credentials.
+      </div>
+      <label class="check-row" for="pm5-tc">
+        <input type="checkbox" id="pm5-tc" onchange="document.getElementById('pm5-btn').disabled=!this.checked" />
+        <span>I have read and agree to the access terms for this request.</span>
+      </label>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="goToScreen('pm',4)">Back</button>
+        <button class="btn-confirm" id="pm5-btn" disabled onclick="pm5Submit()">Accept &amp; Send Request</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─────────────────────────────────────────── -->
+<!-- PM-6 · Companies — Pending Approval         -->
+<!-- ─────────────────────────────────────────── -->
+<div id="screen-pm-6" class="screen" data-role="pm" data-title="Companies — Pending Approval">
+  <div class="app-layout">
+    <div class="app-sidebar">
+      <div class="sl"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg></div>
+      <div class="si active"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg></div>
+      <div class="sb"><div class="av">AC</div></div>
+    </div>
+    <div class="app-main">
+      <div class="app-topbar"><span class="tb-title">UDP — Partner Portal</span><span class="tb-sp"></span><span class="tb-badge">Aerolabs Partner</span></div>
+      <div class="app-content">
+        <h1>Companies</h1>
+        <div class="banner banner-info">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span>Your access request to <strong>Innovatech Solutions</strong> has been sent. The customer admin will review and respond within 72 hours.</span>
+        </div>
+        <div class="toolbar">
+          <div class="search-box"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Search by Name" /></div>
+          <div class="sp"></div>
+          <button class="btn btn-primary" onclick="goToScreen('pm',4)">+ Request New Access</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Company Name</th><th># of Users</th><th># of Offices</th><th>SKU</th><th>Licenses</th><th>Access Status</th></tr></thead>
+            <tbody>
+              <tr><td><a class="co-link">Aerolabs</a><span class="badge-yours">Your company</span></td><td>340</td><td>23</td><td><span class="sku">Pro</span></td><td>340 (0 available)</td><td><span class="status s-active"><span class="sd"></span>Active</span></td></tr>
+              <tr><td><a class="co-link">Innovatech Solutions</a></td><td>—</td><td>—</td><td>—</td><td>—</td><td><span class="status s-pending"><span class="sd"></span>Pending Approval</span></td></tr>
+            </tbody>
+          </table>
+          <div class="tfoot"><div class="show-ctrl">Show <select><option>25</option></select></div><div class="pg"><span class="pg-info">Showing 1–2</span><button class="pg-btn active">1</button></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─────────────────────────────────────────── -->
+<!-- CA-1 · Access Request Email                 -->
+<!-- ─────────────────────────────────────────── -->
+<div id="screen-ca-1" class="screen" data-role="ca" data-title="Access Request Email">
+  <div class="email-layout">
+    <div class="email-frame">
+      <div class="email-chrome">
+        <div class="ec-dots"><div class="ec-dot ec-r"></div><div class="ec-dot ec-y"></div><div class="ec-dot ec-g"></div></div>
+        <div class="ec-bar">[Action Required] Partner Account Access Request Received</div>
+      </div>
+      <div class="email-head">
+        <div class="email-from">From: Dialpad &lt;no-reply@dialpad.com&gt;</div>
+        <div class="email-subject">[Action Required] Partner Account Access Request Received</div>
+        <div class="email-meta">To: sarah.johnson@innovatech.io &nbsp;·&nbsp; Jun 18, 2026</div>
+      </div>
+      <div class="email-plain-hd">
+        <div class="eph-logo">
+          <div class="eph-mark"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg></div>
+          <span class="eph-name">Dialpad</span>
+        </div>
+      </div>
+      <div class="email-body">
+        <h2>Partner Access Request</h2>
+        <p>Hi <strong>Sarah</strong>,</p>
+        <p>You have received a <strong>Delegated Admin Access (DAA)</strong> request from a certified Dialpad partner. Please review the details below and take action.</p>
+        <div class="email-info">
+          <div class="ei-row"><span class="ei-k">Requesting Partner</span><span class="ei-v">Alex Chen — Aerolabs</span></div>
+          <div class="ei-row"><span class="ei-k">Partner Status</span><span class="ei-v" style="color:#059669;">✓ Certified Dialpad Partner</span></div>
+          <div class="ei-row"><span class="ei-k">Request Purpose</span><span class="ei-v">Account support &amp; configuration</span></div>
+          <div class="ei-row"><span class="ei-k">Requested On</span><span class="ei-v">Jun 18, 2026</span></div>
+        </div>
+        <p>You are in full control. You can approve access with a time limit of your choosing, or deny this request entirely. The partner will not have any access until you approve.</p>
+        <div class="email-cta">
+          <a href="#" class="email-btn" onclick="goToScreen('ca',2);return false;">View Access Request →</a>
+        </div>
+        <p style="font-size:12px;color:#9ca3af;text-align:center;">This request will expire automatically in 72 hours if no action is taken.</p>
+      </div>
+      <div class="email-foot">© 2026 Dialpad, Inc. &nbsp;·&nbsp; <a href="#">Manage notifications</a></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─────────────────────────────────────────── -->
+<!-- CA-2 · Partner Access — Pending Requests    -->
+<!-- ─────────────────────────────────────────── -->
+<div id="screen-ca-2" class="screen" data-role="ca" data-title="Partner Access — Pending">
+  <div class="ca-portal">
+    <div class="ca-nav">
+      <div class="ca-nav-brand">
+        <span class="ca-nav-dp">dialpad</span>
+        <span class="ca-nav-sep">|</span>
+        <span class="ca-nav-product">Admin Portal</span>
+      </div>
+      <div class="ca-nav-right">
+        <span class="ca-nav-user">Sarah Johnson</span>
+        <div class="ca-nav-av">SJ</div>
+      </div>
+    </div>
+    <div class="ca-content">
+      <div class="pam-hd">
+        <div class="pam-hd-left">
+          <h1>🛡 Partner Access Management</h1>
+          <p>Review, approve, and manage external partner access to your instance.</p>
+        </div>
+        <div class="pam-expire-note">⚠ Access requests expire in 72 hours if no action is taken.</div>
+      </div>
+      <div class="pam-tabs-row">
+        <div class="tab active">Pending Requests <span class="tab-n">2</span></div>
+        <div class="tab" onclick="goToScreen('ca',5)">Active Access <span class="tab-n">2</span></div>
+        <div class="pam-search">
+          <div class="search-box"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Search partners..." /></div>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Partner Details</th><th>Requested Purpose</th><th>Requested On</th><th>Actions</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>
+                <div class="pd-cell">
+                  <div class="pd-logo">A</div>
+                  <div>
+                    <div class="pd-name">Alex Chen</div>
+                    <div class="pd-meta">Aerolabs &nbsp;·&nbsp; <span class="pd-cert">✓ Certified Partner</span></div>
+                  </div>
+                </div>
+              </td>
+              <td style="font-size:12px;color:#374151;">Account support &amp; configuration</td>
+              <td style="font-size:12px;color:#6b7280;">Jun 18, 2026</td>
+              <td>
+                <div class="td-actions">
+                  <button class="btn btn-danger btn-sm" onclick="document.getElementById('ca2-deny-modal').classList.add('open')">Deny</button>
+                  <button class="btn btn-primary btn-sm" onclick="document.getElementById('ca2-approve-modal').classList.add('open')">Approve Access</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div class="pd-cell">
+                  <div class="pd-logo">M</div>
+                  <div>
+                    <div class="pd-name">Maria Lopez</div>
+                    <div class="pd-meta">TechCorp Inc &nbsp;·&nbsp; <span class="pd-cert">✓ Certified Partner</span></div>
+                  </div>
+                </div>
+              </td>
+              <td style="font-size:12px;color:#374151;">Onboarding &amp; setup</td>
+              <td style="font-size:12px;color:#6b7280;">Jun 17, 2026</td>
+              <td>
+                <div class="td-actions">
+                  <button class="btn btn-danger btn-sm">Deny</button>
+                  <button class="btn btn-primary btn-sm">Approve Access</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <!-- Approve Access modal (inline on CA-2) -->
+  <div class="modal-overlay" id="ca2-approve-modal">
+    <div class="modal">
+      <button class="modal-close" onclick="document.getElementById('ca2-approve-modal').classList.remove('open')"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      <h2>Approve Access Request</h2>
+      <p class="modal-sub">Grant <strong>Alex Chen (Aerolabs)</strong> delegated admin access to your Dialpad account.</p>
+      <div class="note-box note-info">
+        <div class="note-title">🔒 Security Note</div>
+        Access is granted on a permanent basis. You retain full control and can revoke access at any time from this page.
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="document.getElementById('ca2-approve-modal').classList.remove('open')">Cancel</button>
+        <button class="btn-confirm" onclick="ca3Submit()">Confirm Approval</button>
+      </div>
+    </div>
+  </div>
+  <!-- Deny Access modal (inline on CA-2) -->
+  <div class="modal-overlay" id="ca2-deny-modal">
+    <div class="modal">
+      <button class="modal-close" onclick="document.getElementById('ca2-deny-modal').classList.remove('open')"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      <h2>⊗ Deny Access Request</h2>
+      <p class="modal-sub">You are about to deny <strong>Alex Chen (Aerolabs)</strong>'s request for delegated admin access to your account.</p>
+      <div class="note-box note-warn">
+        <div class="note-title">⚠ Please Note</div>
+        The partner will be notified that their request has been declined. They may submit a new request in the future if your needs change.
+      </div>
+      <label>Reason for denial (optional)</label>
+      <textarea class="form-textarea" placeholder="e.g. We handle support internally and don't require external access at this time."></textarea>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="document.getElementById('ca2-deny-modal').classList.remove('open')">Cancel</button>
+        <button class="btn-confirm-danger" onclick="document.getElementById('ca2-deny-modal').classList.remove('open');goToScreen('pm',8)">Deny Request</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─────────────────────────────────────────── -->
+<!-- CA-3 · Approve Access Modal                 -->
+<!-- ─────────────────────────────────────────── -->
+<div id="screen-ca-3" class="screen" data-role="ca" data-title="Approve Access">
+  <div class="ca-portal">
+    <div class="ca-nav">
+      <div class="ca-nav-brand">
+        <span class="ca-nav-dp">dialpad</span>
+        <span class="ca-nav-sep">|</span>
+        <span class="ca-nav-product">Admin Portal</span>
+      </div>
+      <div class="ca-nav-right">
+        <span class="ca-nav-user">Sarah Johnson</span>
+        <div class="ca-nav-av">SJ</div>
+      </div>
+    </div>
+    <div class="ca-content">
+      <div class="pam-hd">
+        <div class="pam-hd-left">
+          <h1>🛡 Partner Access Management</h1>
+          <p>Review, approve, and manage external partner access to your instance.</p>
+        </div>
+        <div class="pam-expire-note">⚠ Access requests expire in 72 hours if no action is taken.</div>
+      </div>
+      <div class="pam-tabs-row">
+        <div class="tab active">Pending Requests <span class="tab-n">2</span></div>
+        <div class="tab">Active Access <span class="tab-n">2</span></div>
+        <div class="pam-search">
+          <div class="search-box"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Search partners..." /></div>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Partner Details</th><th>Requested Purpose</th><th>Requested On</th><th>Actions</th></tr></thead>
+          <tbody>
+            <tr style="background:#f5f3ff;">
+              <td><div class="pd-cell"><div class="pd-logo">A</div><div><div class="pd-name">Alex Chen</div><div class="pd-meta">Aerolabs &nbsp;·&nbsp; <span class="pd-cert">✓ Certified Partner</span></div></div></div></td>
+              <td style="font-size:12px;color:#374151;">Account support &amp; configuration</td>
+              <td style="font-size:12px;color:#6b7280;">Jun 18, 2026</td>
+              <td><div class="td-actions"><button class="btn btn-danger btn-sm">Deny</button><button class="btn btn-primary btn-sm">Approve Access</button></div></td>
+            </tr>
+            <tr>
+              <td><div class="pd-cell"><div class="pd-logo">M</div><div><div class="pd-name">Maria Lopez</div><div class="pd-meta">TechCorp Inc &nbsp;·&nbsp; <span class="pd-cert">✓ Certified Partner</span></div></div></div></td>
+              <td style="font-size:12px;color:#374151;">Onboarding &amp; setup</td>
+              <td style="font-size:12px;color:#6b7280;">Jun 17, 2026</td>
+              <td><div class="td-actions"><button class="btn btn-danger btn-sm">Deny</button><button class="btn btn-primary btn-sm">Approve Access</button></div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="modal-overlay open">
+    <div class="modal">
+      <button class="modal-close" onclick="goToScreen('ca',2)"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      <h2>Approve Access Request</h2>
+      <p class="modal-sub">Grant <strong>Alex Chen (Aerolabs)</strong> delegated admin access to your Dialpad account.</p>
+      <div class="note-box note-info">
+        <div class="note-title">🔒 Security Note</div>
+        Access is granted on a permanent basis. You retain full control and can revoke access at any time from this page.
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="goToScreen('ca',2)">Cancel</button>
+        <button class="btn-confirm" onclick="ca3Submit()">Confirm Approval</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─────────────────────────────────────────── -->
+<!-- CA-4 · Deny Access Modal                    -->
+<!-- ─────────────────────────────────────────── -->
+<div id="screen-ca-4" class="screen" data-role="ca" data-title="Deny Access">
+  <div class="ca-portal">
+    <div class="ca-nav">
+      <div class="ca-nav-brand">
+        <span class="ca-nav-dp">dialpad</span>
+        <span class="ca-nav-sep">|</span>
+        <span class="ca-nav-product">Admin Portal</span>
+      </div>
+      <div class="ca-nav-right">
+        <span class="ca-nav-user">Sarah Johnson</span>
+        <div class="ca-nav-av">SJ</div>
+      </div>
+    </div>
+    <div class="ca-content">
+      <div class="pam-hd">
+        <div class="pam-hd-left">
+          <h1>🛡 Partner Access Management</h1>
+          <p>Review, approve, and manage external partner access to your instance.</p>
+        </div>
+        <div class="pam-expire-note">⚠ Access requests expire in 72 hours if no action is taken.</div>
+      </div>
+      <div class="pam-tabs-row">
+        <div class="tab active">Pending Requests <span class="tab-n">2</span></div>
+        <div class="tab">Active Access <span class="tab-n">2</span></div>
+        <div class="pam-search">
+          <div class="search-box"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Search partners..." /></div>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Partner Details</th><th>Requested Purpose</th><th>Requested On</th><th>Actions</th></tr></thead>
+          <tbody>
+            <tr style="background:#fff5f5;">
+              <td><div class="pd-cell"><div class="pd-logo">A</div><div><div class="pd-name">Alex Chen</div><div class="pd-meta">Aerolabs &nbsp;·&nbsp; <span class="pd-cert">✓ Certified Partner</span></div></div></div></td>
+              <td style="font-size:12px;color:#374151;">Account support &amp; configuration</td>
+              <td style="font-size:12px;color:#6b7280;">Jun 18, 2026</td>
+              <td><div class="td-actions"><button class="btn btn-danger btn-sm">Deny</button><button class="btn btn-primary btn-sm">Approve Access</button></div></td>
+            </tr>
+            <tr>
+              <td><div class="pd-cell"><div class="pd-logo">M</div><div><div class="pd-name">Maria Lopez</div><div class="pd-meta">TechCorp Inc &nbsp;·&nbsp; <span class="pd-cert">✓ Certified Partner</span></div></div></div></td>
+              <td style="font-size:12px;color:#374151;">Onboarding &amp; setup</td>
+              <td style="font-size:12px;color:#6b7280;">Jun 17, 2026</td>
+              <td><div class="td-actions"><button class="btn btn-danger btn-sm">Deny</button><button class="btn btn-primary btn-sm">Approve Access</button></div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="modal-overlay open">
+    <div class="modal">
+      <button class="modal-close" onclick="goToScreen('ca',2)"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      <h2>⊗ Deny Access Request</h2>
+      <p class="modal-sub">You are about to deny <strong>Alex Chen (Aerolabs)</strong>'s request for delegated admin access to your account.</p>
+      <div class="note-box note-warn">
+        <div class="note-title">⚠ Please Note</div>
+        The partner will be notified that their request has been declined. They may submit a new request in the future if your needs change.
+      </div>
+      <label>Reason for denial (optional)</label>
+      <textarea class="form-textarea" placeholder="e.g. We handle support internally and don't require external access at this time."></textarea>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="goToScreen('ca',2)">Cancel</button>
+        <button class="btn-confirm-danger" onclick="goToScreen('pm',8)">Deny Request</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─────────────────────────────────────────── -->
+<!-- PM-7 · Access Approved Email                -->
+<!-- ─────────────────────────────────────────── -->
+<div id="screen-pm-7" class="screen" data-role="pm" data-title="Access Approved Email">
+  <div class="email-layout">
+    <div class="email-frame">
+      <div class="email-chrome">
+        <div class="ec-dots"><div class="ec-dot ec-r"></div><div class="ec-dot ec-y"></div><div class="ec-dot ec-g"></div></div>
+        <div class="ec-bar">Access to Innovatech Solutions has been approved</div>
+      </div>
+      <div class="email-head">
+        <div class="email-from">From: Dialpad &lt;no-reply@dialpad.com&gt;</div>
+        <div class="email-subject">Access to Innovatech Solutions has been approved</div>
+        <div class="email-meta">To: alex.chen@aerolabs.com &nbsp;·&nbsp; Jun 19, 2026</div>
+      </div>
+      <div class="email-plain-hd">
+        <div class="eph-logo">
+          <div class="eph-mark"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg></div>
+          <span class="eph-name">Dialpad</span>
+        </div>
+      </div>
+      <div class="email-body">
+        <h2>Your access request has been approved ✓</h2>
+        <p>Hi <strong>Alex</strong>,</p>
+        <p>Great news! <strong>Sarah Johnson</strong> at Innovatech Solutions has approved your Delegated Account Access request. You can now log in to UDP and manage their Dialpad account within the approved scope.</p>
+        <div class="email-info">
+          <div class="ei-row"><span class="ei-k">Company</span><span class="ei-v">Innovatech Solutions</span></div>
+          <div class="ei-row"><span class="ei-k">Approved By</span><span class="ei-v">Sarah Johnson (Company Admin)</span></div>
+          <div class="ei-row"><span class="ei-k">Access Type</span><span class="ei-v" style="color:#059669;font-weight:700;">Permanent Access</span></div>
+        </div>
+        <p>You may begin managing the account immediately. Access remains active until the customer admin chooses to revoke it.</p>
+      </div>
+      <div class="email-foot">© 2026 Dialpad, Inc. &nbsp;·&nbsp; <a href="#">Manage notifications</a></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─────────────────────────────────────────── -->
+<!-- PM-8 · Access Denied Email                  -->
+<!-- ─────────────────────────────────────────── -->
+<div id="screen-pm-8" class="screen" data-role="pm" data-title="Access Denied Email">
+  <div class="email-layout">
+    <div class="email-frame">
+      <div class="email-chrome">
+        <div class="ec-dots"><div class="ec-dot ec-r"></div><div class="ec-dot ec-y"></div><div class="ec-dot ec-g"></div></div>
+        <div class="ec-bar">Your access request to Blue Sky Solutions was not approved</div>
+      </div>
+      <div class="email-head">
+        <div class="email-from">From: Dialpad &lt;no-reply@dialpad.com&gt;</div>
+        <div class="email-subject">Your access request to Blue Sky Solutions was not approved</div>
+        <div class="email-meta">To: alex.chen@aerolabs.com &nbsp;·&nbsp; Jun 20, 2026</div>
+      </div>
+      <div class="email-plain-hd">
+        <div class="eph-logo">
+          <div class="eph-mark"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg></div>
+          <span class="eph-name">Dialpad</span>
+        </div>
+      </div>
+      <div class="email-body">
+        <h2>Your access request was not approved</h2>
+        <p>Hi <strong>Alex</strong>,</p>
+        <p>The admin at <strong>Blue Sky Solutions</strong> has reviewed and declined your Delegated Account Access request. This is their prerogative — their account remains secure, and no access was granted.</p>
+        <div class="email-info">
+          <div class="ei-row"><span class="ei-k">Company</span><span class="ei-v">Blue Sky Solutions</span></div>
+          <div class="ei-row"><span class="ei-k">Request Date</span><span class="ei-v">Jun 19, 2026</span></div>
+          <div class="ei-row"><span class="ei-k">Decision</span><span class="ei-v" style="color:#dc2626;">Not Approved</span></div>
+          <div class="ei-row"><span class="ei-k">Reason</span><span class="ei-v" style="color:#6b7280;font-style:italic;">We handle support internally at this time.</span></div>
+        </div>
+        <p>You may submit a new request in the future if their needs change. If you believe this was in error, please reach out to your Dialpad account manager.</p>
+        <div class="email-cta">
+          <a href="#" class="email-btn" onclick="goToScreen('pm',9);return false;">Back to UDP →</a>
+        </div>
+      </div>
+      <div class="email-foot">© 2026 Dialpad, Inc. &nbsp;·&nbsp; <a href="#">Manage notifications</a></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─────────────────────────────────────────── -->
+<!-- PM-9 · Companies — Active                   -->
+<!-- ─────────────────────────────────────────── -->
+<div id="screen-pm-9" class="screen" data-role="pm" data-title="Companies — Active">
+  <div class="app-layout">
+    <div class="app-sidebar">
+      <div class="sl"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg></div>
+      <div class="si active"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg></div>
+      <div class="sb"><div class="av">AC</div></div>
+    </div>
+    <div class="app-main">
+      <div class="app-topbar"><span class="tb-title">UDP — Partner Portal</span><span class="tb-sp"></span><span class="tb-badge">Aerolabs Partner</span></div>
+      <div class="app-content">
+        <h1>Companies</h1>
+        <div class="toolbar">
+          <div class="search-box"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Search by Name" /></div>
+          <div class="sp"></div>
+          <button class="btn btn-primary" onclick="goToScreen('pm',4)">+ Request New Access</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Company Name</th><th># of Users</th><th># of Offices</th><th>SKU</th><th>Licenses</th><th>Access Status</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr><td><a class="co-link">Aerolabs</a><span class="badge-yours">Your company</span></td><td>340</td><td>23</td><td><span class="sku">Pro</span></td><td>340 (0 available)</td><td><span class="status s-active"><span class="sd"></span>Active</span></td><td></td></tr>
+              <tr><td><a class="co-link">Innovatech Solutions</a></td><td>290</td><td>12</td><td><span class="sku">Standard</span></td><td>290 (50 available)</td><td><span class="status s-active"><span class="sd"></span>Active</span></td><td><button class="btn btn-secondary btn-sm" onclick="document.getElementById('pm9-add-users-modal').classList.add('open')">Add Partner Users</button></td></tr>
+            </tbody>
+          </table>
+          <div class="tfoot"><div class="show-ctrl">Show <select><option>25</option></select></div><div class="pg"><span class="pg-info">Showing 1–2</span><button class="pg-btn active">1</button></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Add Partner Users modal (inline on PM-9) -->
+  <div class="modal-overlay" id="pm9-add-users-modal">
+    <div class="modal">
+      <button class="modal-close" onclick="document.getElementById('pm9-add-users-modal').classList.remove('open')"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      <h2>Add Partner Users</h2>
+      <p class="modal-sub">Adding users to <strong>Innovatech Solutions</strong>. Select from your organization below.</p>
+      <div class="domain-note">🔒 Only users from your organization (aerolabs.com) are shown. Users from other organizations cannot be added.</div>
+      <label>Select Users</label>
+      <div class="user-pick-list">
+        <label class="user-pick-item">
+          <input type="checkbox" />
+          <div class="upi-info"><div class="upi-name">Sam Rivera</div><div class="upi-email">sam.rivera@aerolabs.com</div></div>
+        </label>
+        <label class="user-pick-item">
+          <input type="checkbox" />
+          <div class="upi-info"><div class="upi-name">Chris Wong</div><div class="upi-email">chris.wong@aerolabs.com</div></div>
+        </label>
+        <label class="user-pick-item">
+          <input type="checkbox" />
+          <div class="upi-info"><div class="upi-name">Priya Nair</div><div class="upi-email">priya.nair@aerolabs.com</div></div>
+        </label>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="document.getElementById('pm9-add-users-modal').classList.remove('open')">Cancel</button>
+        <button class="btn-confirm" onclick="showToast('Users added — roles will be assigned by your CSR');document.getElementById('pm9-add-users-modal').classList.remove('open')">Add Users</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─────────────────────────────────────────── -->
+<!-- CA-5 · Partner Access — Active              -->
+<!-- ─────────────────────────────────────────── -->
+<div id="screen-ca-5" class="screen" data-role="ca" data-title="Partner Access — Active">
+  <div class="ca-portal">
+    <div class="ca-nav">
+      <div class="ca-nav-brand">
+        <span class="ca-nav-dp">dialpad</span>
+        <span class="ca-nav-sep">|</span>
+        <span class="ca-nav-product">Admin Portal</span>
+      </div>
+      <div class="ca-nav-right">
+        <span class="ca-nav-user">Sarah Johnson</span>
+        <div class="ca-nav-av">SJ</div>
+      </div>
+    </div>
+    <div class="ca-content">
+      <div class="pam-hd">
+        <div class="pam-hd-left">
+          <h1>🛡 Partner Access Management</h1>
+          <p>Review, approve, and manage external partner access to your instance.</p>
+        </div>
+      </div>
+      <div class="pam-tabs-row">
+        <div class="tab" onclick="goToScreen('ca',2)">Pending Requests <span class="tab-n">0</span></div>
+        <div class="tab active">Active Access <span class="tab-n">3</span></div>
+        <div class="pam-search">
+          <div class="search-box"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Search users..." /></div>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>User</th><th>Role</th><th>Access Granted</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody>
+            <tr class="org-group-hd"><td colspan="5">Aerolabs &nbsp;·&nbsp; 2 users</td></tr>
+            <tr>
+              <td><div class="pd-cell"><div class="pd-logo">A</div><div><div class="pd-name">Alex Chen</div><div class="pd-meta">alex.chen@aerolabs.com</div></div></div></td>
+              <td><span class="role-badge rb-pm">Partner Manager</span></td>
+              <td style="font-size:12px;color:#6b7280;">Jun 19, 2026</td>
+              <td><span class="status s-active"><span class="sd"></span>Active</span></td>
+              <td><div class="td-actions"><button class="btn btn-danger btn-sm" onclick="document.getElementById('ca5-revoke-modal').classList.add('open')">Revoke</button></div></td>
+            </tr>
+            <tr>
+              <td><div class="pd-cell"><div class="pd-logo">J</div><div><div class="pd-name">Jamie Park</div><div class="pd-meta">jamie.park@aerolabs.com</div></div></div></td>
+              <td><span class="role-badge rb-pu">Partner User</span></td>
+              <td style="font-size:12px;color:#6b7280;">Jun 20, 2026</td>
+              <td><span class="status s-active"><span class="sd"></span>Active</span></td>
+              <td><div class="td-actions"><button class="btn btn-danger btn-sm" onclick="document.getElementById('ca5-user-revoke-modal').classList.add('open')">Revoke</button></div></td>
+            </tr>
+            <tr class="org-group-hd"><td colspan="5">TechCorp Inc &nbsp;·&nbsp; 1 user</td></tr>
+            <tr>
+              <td><div class="pd-cell"><div class="pd-logo">M</div><div><div class="pd-name">Maria Lopez</div><div class="pd-meta">maria.lopez@techcorp.com</div></div></div></td>
+              <td><span class="role-badge rb-pm">Partner Manager</span></td>
+              <td style="font-size:12px;color:#6b7280;">Jun 17, 2026</td>
+              <td><span class="status s-active"><span class="sd"></span>Active</span></td>
+              <td><div class="td-actions"><button class="btn btn-danger btn-sm">Revoke</button></div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <!-- Revoke Access modal (inline on CA-5) -->
+  <div class="modal-overlay" id="ca5-revoke-modal">
+    <div class="modal">
+      <button class="modal-close" onclick="document.getElementById('ca5-revoke-modal').classList.remove('open')"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      <h2>⊗ Revoke Partner Access</h2>
+      <p class="modal-sub">You are about to immediately revoke <strong>Alex Chen (Aerolabs)</strong>'s delegated admin access.</p>
+      <div class="note-box note-crit">
+        <div class="note-title">🗑 Critical Action</div>
+        Revoking access is immediate and irreversible. Aerolabs will lose all access to your account right away and will be notified by email.
+      </div>
+      <label>Reason for revocation (optional)</label>
+      <textarea class="form-textarea" placeholder="e.g. Support engagement has ended. Removing access for security."></textarea>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="document.getElementById('ca5-revoke-modal').classList.remove('open')">Cancel</button>
+        <button class="btn-confirm-danger" onclick="document.getElementById('ca5-revoke-modal').classList.remove('open');goToScreen('pm',10)">Confirm Revocation</button>
+      </div>
+    </div>
+  </div>
+  <!-- Individual user revoke modal (inline on CA-5) -->
+  <div class="modal-overlay" id="ca5-user-revoke-modal">
+    <div class="modal">
+      <button class="modal-close" onclick="document.getElementById('ca5-user-revoke-modal').classList.remove('open')"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      <h2>⊗ Revoke User Access</h2>
+      <p class="modal-sub">You are about to revoke <strong>Jamie Park (Aerolabs)</strong>'s access to your Innovatech Solutions account.</p>
+      <div class="note-box note-warn">
+        <div class="note-title">⚠ Please Note</div>
+        Jamie Park will be notified by email. Other Aerolabs users retain their access independently.
+      </div>
+      <label>Reason for revocation (optional)</label>
+      <textarea class="form-textarea" placeholder="e.g. Team member no longer supporting this account."></textarea>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="document.getElementById('ca5-user-revoke-modal').classList.remove('open')">Cancel</button>
+        <button class="btn-confirm-danger" onclick="document.getElementById('ca5-user-revoke-modal').classList.remove('open');goToScreen('ca',9)">Revoke Access</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─────────────────────────────────────────── -->
+<!-- CA-6 · Expiry Warning Email                 -->
+<!-- ─────────────────────────────────────────── -->
+<div id="screen-ca-6" class="screen" data-role="ca" data-title="Expiry Warning Email">
+  <div class="email-layout">
+    <div class="email-frame">
+      <div class="email-chrome">
+        <div class="ec-dots"><div class="ec-dot ec-r"></div><div class="ec-dot ec-y"></div><div class="ec-dot ec-g"></div></div>
+        <div class="ec-bar">Partner access to your account expires in 30 days</div>
+      </div>
+      <div class="email-head">
+        <div class="email-from">From: Dialpad &lt;no-reply@dialpad.com&gt;</div>
+        <div class="email-subject">Partner access to your account expires in 30 days</div>
+        <div class="email-meta">To: sarah.johnson@innovatech.io &nbsp;·&nbsp; May 19, 2027</div>
+      </div>
+      <div class="email-plain-hd">
+        <div class="eph-logo">
+          <div class="eph-mark"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg></div>
+          <span class="eph-name">Dialpad</span>
+        </div>
+      </div>
+      <div class="email-body">
+        <h2>Partner access is expiring soon</h2>
+        <p>Hi <strong>Sarah</strong>,</p>
+        <p>This is a reminder that <strong>Alex Chen (Aerolabs)</strong>'s delegated admin access to your Innovatech Solutions account is set to expire in <strong>30 days</strong>.</p>
+        <div class="email-info">
+          <div class="ei-row"><span class="ei-k">Partner</span><span class="ei-v">Alex Chen — Aerolabs</span></div>
+          <div class="ei-row"><span class="ei-k">Current Expiry</span><span class="ei-v" style="color:#d97706;font-weight:700;">Jun 18, 2027</span></div>
+          <div class="ei-row"><span class="ei-k">Days Remaining</span><span class="ei-v">30 days</span></div>
+        </div>
+        <p>If you'd like to continue working with this partner, you can extend their access from the Admin Portal. If you no longer require their support, you can let access expire naturally or revoke it immediately.</p>
+        <div class="email-cta-pair">
+          <a href="#" class="email-btn" onclick="goToScreen('ca',5);return false;">Review Access →</a>
+        </div>
+      </div>
+      <div class="email-foot">© 2026 Dialpad, Inc. &nbsp;·&nbsp; <a href="#">Manage notifications</a></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─────────────────────────────────────────── -->
+<!-- CA-7 · Extend Access Modal                  -->
+<!-- ─────────────────────────────────────────── -->
+<div id="screen-ca-7" class="screen" data-role="ca" data-title="Extend Access">
+  <div class="ca-portal">
+    <div class="ca-nav">
+      <div class="ca-nav-brand">
+        <span class="ca-nav-dp">dialpad</span>
+        <span class="ca-nav-sep">|</span>
+        <span class="ca-nav-product">Admin Portal</span>
+      </div>
+      <div class="ca-nav-right">
+        <span class="ca-nav-user">Sarah Johnson</span>
+        <div class="ca-nav-av">SJ</div>
+      </div>
+    </div>
+    <div class="ca-content">
+      <div class="pam-hd">
+        <div class="pam-hd-left">
+          <h1>🛡 Partner Access Management</h1>
+          <p>Review, approve, and manage external partner access to your instance.</p>
+        </div>
+      </div>
+      <div class="pam-tabs-row">
+        <div class="tab">Pending Requests <span class="tab-n">0</span></div>
+        <div class="tab active">Active Access <span class="tab-n">2</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-overlay open">
+    <div class="modal">
+      <button class="modal-close" onclick="goToScreen('ca',5)"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      <h2>⟳ Extend Partner Access</h2>
+      <p class="modal-sub">Extend <strong>Alex Chen (Aerolabs)</strong>'s access beyond the current expiry of Jun 18, 2027.</p>
+      <label>Additional Duration</label>
+      <select class="form-select">
+        <option value="24h">24 Hours — Limited Access</option>
+        <option value="7d">7 Days — Standard Support</option>
+        <option value="30d" selected>30 Days — Extended Project</option>
+        <option value="unlimited">Unlimited — Permanent Access</option>
+      </select>
+      <p style="font-size:12px;color:#6b7280;margin-bottom:16px;">The new expiry date will be calculated from the current expiration time. New expiry: <strong>Jul 18, 2027</strong>.</p>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="goToScreen('ca',5)">Cancel</button>
+        <button class="btn-confirm" onclick="showToast('Access extended to Jul 18, 2027');goToScreen('ca',5)">Confirm Extension</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─────────────────────────────────────────── -->
+<!-- CA-8 · Revoke Access Modal                  -->
+<!-- ─────────────────────────────────────────── -->
+<div id="screen-ca-8" class="screen" data-role="ca" data-title="Revoke Access">
+  <div class="ca-portal">
+    <div class="ca-nav">
+      <div class="ca-nav-brand">
+        <span class="ca-nav-dp">dialpad</span>
+        <span class="ca-nav-sep">|</span>
+        <span class="ca-nav-product">Admin Portal</span>
+      </div>
+      <div class="ca-nav-right">
+        <span class="ca-nav-user">Sarah Johnson</span>
+        <div class="ca-nav-av">SJ</div>
+      </div>
+    </div>
+    <div class="ca-content">
+      <div class="pam-hd">
+        <div class="pam-hd-left">
+          <h1>🛡 Partner Access Management</h1>
+          <p>Review, approve, and manage external partner access to your instance.</p>
+        </div>
+      </div>
+      <div class="pam-tabs-row">
+        <div class="tab">Pending Requests <span class="tab-n">0</span></div>
+        <div class="tab active">Active Access <span class="tab-n">2</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-overlay open">
+    <div class="modal">
+      <button class="modal-close" onclick="goToScreen('ca',5)"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      <h2>⊗ Revoke Partner Access</h2>
+      <p class="modal-sub">You are about to immediately revoke <strong>Alex Chen (Aerolabs)</strong>'s delegated admin access.</p>
+      <div class="note-box note-crit">
+        <div class="note-title">🗑 Critical Action</div>
+        Revoking access is immediate and irreversible. Aerolabs will lose all access to your account right away and will be notified by email.
+      </div>
+      <label>Reason for revocation (optional)</label>
+      <textarea class="form-textarea" placeholder="e.g. Support engagement has ended. Removing access for security."></textarea>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="goToScreen('ca',5)">Cancel</button>
+        <button class="btn-confirm-danger" onclick="goToScreen('pm',10)">Confirm Revocation</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─────────────────────────────────────────── -->
+<!-- PM-10 · Access Revoked Email                -->
+<!-- ─────────────────────────────────────────── -->
+<div id="screen-pm-10" class="screen" data-role="pm" data-title="Access Revoked Email">
+  <div class="email-layout">
+    <div class="email-frame">
+      <div class="email-chrome">
+        <div class="ec-dots"><div class="ec-dot ec-r"></div><div class="ec-dot ec-y"></div><div class="ec-dot ec-g"></div></div>
+        <div class="ec-bar">Your access to Innovatech Solutions has been revoked</div>
+      </div>
+      <div class="email-head">
+        <div class="email-from">From: Dialpad &lt;no-reply@dialpad.com&gt;</div>
+        <div class="email-subject">Your delegated access to Innovatech Solutions has been revoked</div>
+        <div class="email-meta">To: alex.chen@aerolabs.com &nbsp;·&nbsp; Jun 12, 2027</div>
+      </div>
+      <div class="email-plain-hd">
+        <div class="eph-logo">
+          <div class="eph-mark"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg></div>
+          <span class="eph-name">Dialpad</span>
+        </div>
+      </div>
+      <div class="email-body">
+        <h2>Your access has been revoked</h2>
+        <p>Hi <strong>Alex</strong>,</p>
+        <p>The admin at <strong>Innovatech Solutions</strong> has revoked your Delegated Account Access. Your access to their Dialpad account has been removed immediately.</p>
+        <div class="email-info">
+          <div class="ei-row"><span class="ei-k">Company</span><span class="ei-v">Innovatech Solutions</span></div>
+          <div class="ei-row"><span class="ei-k">Revoked By</span><span class="ei-v">Sarah Johnson (Company Admin)</span></div>
+          <div class="ei-row"><span class="ei-k">Revoked On</span><span class="ei-v" style="color:#dc2626;">Jun 12, 2027</span></div>
+          <div class="ei-row"><span class="ei-k">Reason</span><span class="ei-v" style="color:#6b7280;font-style:italic;">Support engagement has ended.</span></div>
+        </div>
+        <p>If you believe this was done in error, please reach out to your customer contact directly. You can re-request access from UDP if needed in the future.</p>
+        <div class="email-cta">
+          <a href="#" class="email-btn" onclick="goToScreen('pm',11);return false;">View in UDP →</a>
+        </div>
+      </div>
+      <div class="email-foot">© 2026 Dialpad, Inc. &nbsp;·&nbsp; <a href="#">Manage notifications</a></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─────────────────────────────────────────── -->
+<!-- CA-9 · User Access Revoked Email            -->
+<!-- ─────────────────────────────────────────── -->
+<div id="screen-ca-9" class="screen" data-role="ca" data-title="User Access Revoked Email">
+  <div class="email-layout">
+    <div class="email-frame">
+      <div class="email-chrome">
+        <div class="ec-dots"><div class="ec-dot ec-r"></div><div class="ec-dot ec-y"></div><div class="ec-dot ec-g"></div></div>
+        <div class="ec-bar">Your access to Innovatech Solutions has been revoked</div>
+      </div>
+      <div class="email-head">
+        <div class="email-from">From: Dialpad &lt;no-reply@dialpad.com&gt;</div>
+        <div class="email-subject">Your access to Innovatech Solutions has been revoked</div>
+        <div class="email-meta">To: jamie.park@aerolabs.com &nbsp;·&nbsp; Jun 20, 2026</div>
+      </div>
+      <div class="email-plain-hd">
+        <div class="eph-logo">
+          <div class="eph-mark"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg></div>
+          <span class="eph-name">Dialpad</span>
+        </div>
+      </div>
+      <div class="email-body">
+        <h2>Your access has been revoked</h2>
+        <p>Hi <strong>Jamie</strong>,</p>
+        <p>The admin at <strong>Innovatech Solutions</strong> has revoked your delegated access to their Dialpad account. You will no longer be able to access or manage their account.</p>
+        <div class="email-info">
+          <div class="ei-row"><span class="ei-k">Company</span><span class="ei-v">Innovatech Solutions</span></div>
+          <div class="ei-row"><span class="ei-k">Revoked By</span><span class="ei-v">Sarah Johnson (Company Admin)</span></div>
+          <div class="ei-row"><span class="ei-k">Date</span><span class="ei-v">Jun 20, 2026</span></div>
+        </div>
+        <p>If you have questions about this decision, please reach out to your Partner Manager <strong>Alex Chen</strong> at alex.chen@aerolabs.com.</p>
+      </div>
+      <div class="email-foot">© 2026 Dialpad, Inc. &nbsp;·&nbsp; <a href="#">Manage notifications</a></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─────────────────────────────────────────── -->
+<!-- PM-11 · Companies — Revoked                 -->
+<!-- ─────────────────────────────────────────── -->
+<div id="screen-pm-11" class="screen" data-role="pm" data-title="Companies — Revoked">
+  <div class="app-layout">
+    <div class="app-sidebar">
+      <div class="sl"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg></div>
+      <div class="si active"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg></div>
+      <div class="sb"><div class="av">AC</div></div>
+    </div>
+    <div class="app-main">
+      <div class="app-topbar"><span class="tb-title">UDP — Partner Portal</span><span class="tb-sp"></span><span class="tb-badge">Aerolabs Partner</span></div>
+      <div class="app-content">
+        <h1>Companies</h1>
+        <div class="banner banner-warn">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <span>Your access to <strong>Innovatech Solutions</strong> was revoked on Jun 12, 2027. You can submit a new access request if needed.</span>
+        </div>
+        <div class="toolbar">
+          <div class="search-box"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Search by Name" /></div>
+          <div class="sp"></div>
+          <button class="btn btn-primary" onclick="goToScreen('pm',4)">+ Request New Access</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Company Name</th><th># of Users</th><th># of Offices</th><th>SKU</th><th>Licenses</th><th>Access Status</th></tr></thead>
+            <tbody>
+              <tr><td><a class="co-link">Aerolabs</a><span class="badge-yours">Your company</span></td><td>340</td><td>23</td><td><span class="sku">Pro</span></td><td>340 (0 available)</td><td><span class="status s-active"><span class="sd"></span>Active</span></td></tr>
+              <tr><td><a class="co-link">Innovatech Solutions</a></td><td>—</td><td>—</td><td>—</td><td>—</td><td><span class="status s-revoked"><span class="sd"></span>Revoked Jun 12</span></td></tr>
+            </tbody>
+          </table>
+          <div class="tfoot"><div class="show-ctrl">Show <select><option>25</option></select></div><div class="pg"><span class="pg-info">Showing 1–2</span><button class="pg-btn active">1</button></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+</div><!-- /#screen-area -->
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <svg class="toast-icon" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="toast-msg">Done</span>
+</div>
+
+<!-- Screen label -->
+<div class="slabel" id="slabel">pm-1</div>
+
+<script>
+  const allOrder = [
+    'pm-1','pm-2','pm-3','pm-4','pm-5','pm-6',
+    'ca-1','ca-2','ca-3','ca-4',
+    'pm-7','pm-8','pm-9',
+    'ca-5','ca-8','ca-9',
+    'pm-10','pm-11'
+  ];
+  const pmOrder = ['pm-1','pm-2','pm-3','pm-4','pm-5','pm-6','pm-7','pm-8','pm-9','pm-10','pm-11'];
+  const caOrder = ['ca-1','ca-2','ca-3','ca-4','ca-5','ca-8','ca-9'];
+
+  const views = { all: allOrder, pm: pmOrder, ca: caOrder };
+  let currentView = 'all';
+  let currentIdx = 0;
+
+  function activeList() { return views[currentView]; }
+
+  function switchView(v) {
+    currentView = v;
+    currentIdx = 0;
+    ['all','pm','ca'].forEach(x => document.getElementById('tab-'+x).classList.toggle('active', x===v));
+    render();
+  }
+
+  function prevScreen() { if (currentIdx > 0) { currentIdx--; render(); } }
+  function nextScreen() { if (currentIdx < activeList().length - 1) { currentIdx++; render(); } }
+
+  function goToScreen(role, num) {
+    const id = role + '-' + num;
+    const inAll = allOrder.indexOf(id);
+    if (inAll >= 0) { currentView = 'all'; currentIdx = inAll; }
+    else { const inRole = views[role].indexOf(id); if (inRole >= 0) { currentView = role; currentIdx = inRole; } }
+    ['all','pm','ca'].forEach(x => document.getElementById('tab-'+x).classList.toggle('active', x===currentView));
+    render();
+  }
+
+  function render() {
+    const list = activeList();
+    const id = list[currentIdx];
+
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    const el = document.getElementById('screen-' + id);
+    if (el) el.classList.add('active');
+
+    document.getElementById('screen-counter').textContent = 'Screen ' + (currentIdx+1) + ' of ' + list.length;
+    document.getElementById('prev-btn').disabled = currentIdx === 0;
+    document.getElementById('next-btn').disabled = currentIdx === list.length - 1;
+    document.getElementById('slabel').textContent = id + ' · ' + (el ? el.dataset.title : '');
+  }
+
+  function toggleDropdown(triggerId, menuId) {
+    const menu = document.getElementById(menuId);
+    menu.classList.toggle('open');
+    document.addEventListener('click', function closeOnOutside(e) {
+      if (!e.target.closest('#' + triggerId) && !e.target.closest('#' + menuId)) {
+        menu.classList.remove('open');
+        document.removeEventListener('click', closeOnOutside);
+      }
+    }, true);
+  }
+
+  function selectDdOption(menuId, triggerId, name, sub) {
+    document.getElementById(triggerId).querySelector('span').textContent = name;
+    document.getElementById(menuId).classList.remove('open');
+  }
+
+  function showToast(msg) {
+    document.getElementById('toast-msg').textContent = msg;
+    const t = document.getElementById('toast');
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3500);
+  }
+
+  function pm5Submit() {
+    document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('open'));
+    showToast('Access request sent to Innovatech Solutions — Pending Approval');
+    setTimeout(() => goToScreen('pm', 6), 400);
+  }
+
+  function ca3Submit() {
+    document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('open'));
+    showToast('Access granted to Alex Chen (Aerolabs) — Permanent Access');
+    setTimeout(() => goToScreen('pm', 7), 400);
+  }
+
+  render();
+</script>
+
+</body>
+</html>
