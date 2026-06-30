@@ -31,7 +31,6 @@
       color: #fff; font-size: 13px; font-weight: 600; cursor: pointer;
       background: none; border: none;
     }
-    .topbar-menu svg { color: #fff; }
     .topbar-search {
       display: flex; align-items: center; gap: 6px;
       background: #fff; border-radius: 4px;
@@ -106,7 +105,7 @@
     .field-label { font-size: 12px; color: #555; margin-bottom: 2px; margin-top: 14px; }
     .field-value { font-size: 13px; color: #111; }
 
-    /* ── Info / warning banners ────────────────────────────── */
+    /* ── Info banners ──────────────────────────────────────── */
     .banner {
       display: flex; align-items: flex-start; gap: 8px;
       padding: 8px 12px; font-size: 12.5px; line-height: 1.5;
@@ -114,7 +113,6 @@
     }
     .banner-blue  { background: #f0f4ff; border-color: #4285f4; color: #1a3a8f; }
     .banner-amber { background: #fffbf0; border-color: #F5A623; color: #7a4f00; }
-    .banner-green { background: #f0fff4; border-color: #34a853; color: #1a5c35; }
     .banner svg { flex-shrink: 0; margin-top: 1px; }
 
     /* ── RBAC notice ───────────────────────────────────────── */
@@ -157,16 +155,34 @@
     .btn-danger:hover:not(:disabled)   { background: #fdf0f0; }
     .btn-sm { padding: 3px 9px; font-size: 12px; }
 
-    /* ── Tabs ──────────────────────────────────────────────── */
-    .tabs { display: flex; gap: 0; margin-bottom: 14px; border-bottom: 1px solid #ddd; }
-    .tab {
-      padding: 7px 16px; font-size: 13px; cursor: pointer;
-      color: #555; border-bottom: 2px solid transparent; margin-bottom: -1px;
+    /* ── Split / dropdown button ───────────────────────────── */
+    .btn-split { display: inline-flex; position: relative; }
+    .btn-split .btn-split-main {
+      border-radius: 3px 0 0 3px; border-right: 1px solid rgba(255,255,255,.35);
     }
-    .tab:hover { color: #111; }
-    .tab.active { color: #111; border-bottom-color: #F5A623; font-weight: 600; }
-    .tab-pane { display: none; }
-    .tab-pane.active { display: block; }
+    .btn-split .btn-split-caret {
+      border-radius: 0 3px 3px 0; padding: 5px 8px;
+      background: #F5A623; color: #fff; border: 1px solid #F5A623;
+      cursor: pointer; font-size: 11px;
+    }
+    .btn-split .btn-split-caret:hover { background: #e0941a; border-color: #e0941a; }
+    .btn-split-menu {
+      position: absolute; top: calc(100% + 4px); right: 0;
+      background: #fff; border: 1px solid #ddd; border-radius: 3px;
+      box-shadow: 0 4px 12px rgba(0,0,0,.12);
+      min-width: 190px; z-index: 50;
+      display: none;
+    }
+    .btn-split-menu.open { display: block; }
+    .btn-split-menu button {
+      display: flex; align-items: center; gap: 8px;
+      width: 100%; padding: 9px 14px;
+      background: none; border: none; text-align: left;
+      font-size: 13px; color: #111; cursor: pointer;
+    }
+    .btn-split-menu button:hover { background: #fffcf5; }
+    .btn-split-menu button svg { color: #888; flex-shrink: 0; }
+    .btn-split-menu .menu-divider { border-top: 1px solid #f0f0f0; }
 
     /* ── Table ─────────────────────────────────────────────── */
     table { width: 100%; border-collapse: collapse; font-size: 13px; }
@@ -227,6 +243,7 @@
       overflow: hidden;
     }
     .modal.modal-sm { width: 400px; }
+    .modal.modal-lg { width: 560px; }
     .modal-head {
       padding: 14px 18px; border-bottom: 1px solid #e0e0e0;
       display: flex; align-items: center; justify-content: space-between;
@@ -338,12 +355,11 @@
 
     <div class="page-title">Company Lookup</div>
 
-    <!-- Company name & meta -->
     <div class="field-label">Salesforce Account Name: Not linked</div>
     <div class="field-label">Name</div>
     <div class="field-value" style="margin-bottom:10px; font-size:14px; font-weight:600;">Randstad N.V.</div>
 
-    <!-- DOT-SEPARATED NAV (matches real CSR style) -->
+    <!-- DOT-SEPARATED NAV -->
     <div class="company-nav">
       (<a href="#">Users</a><span class="sep">·</span>
       <a href="#">Offices (23)</a><span class="sep">·</span>
@@ -367,10 +383,7 @@
 
     <hr>
 
-    <!-- ══════════════════════════════════════════
-         AUTHORIZED SUPPORT USERS SECTION
-    ═══════════════════════════════════════════ -->
-
+    <!-- AUTHORIZED SUPPORT USERS SECTION -->
     <div class="section-heading">
       Authorized Support Users
       <span class="badge badge-amber" id="count-badge">3 users</span>
@@ -387,93 +400,58 @@
       Requires <strong>COMPANY_SUPER_ADMIN</strong> permission to add or remove users.
     </div>
 
-    <!-- Active restriction banner -->
-    <div class="banner banner-amber" id="restriction-banner">
-      <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
-      <span><strong>Restriction is active.</strong> Only the users listed below may open support tickets for Randstad N.V. Verify the caller's email before proceeding.</span>
-    </div>
-
-    <!-- TABS -->
-    <div class="tabs">
-      <div class="tab active" data-tab="active">Active Users</div>
-      <div class="tab" data-tab="csv">Bulk Upload (CSV)</div>
-    </div>
-
-    <!-- ── TAB: Active Users ───────────────────────────── -->
-    <div class="tab-pane active" id="tab-active">
-
-      <div class="toolbar">
-        <div class="toolbar-left">
-          <div class="search-wrap">
-            <svg class="icon" width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.116-.099zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg>
-            <input class="input with-icon" style="width:230px;" type="text" placeholder="Filter by name or email…" id="user-search" oninput="renderTable()">
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <div class="search-wrap">
+          <svg class="icon" width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.116-.099zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg>
+          <input class="input with-icon" style="width:230px;" type="text" placeholder="Filter by name or email…" id="user-search" oninput="renderTable()">
+        </div>
+      </div>
+      <div class="toolbar-right">
+        <!-- Split button: main action + dropdown caret -->
+        <div class="btn-split" id="add-user-split">
+          <button class="btn btn-primary btn-sm btn-split-main" onclick="openAddModal()">+ Add User</button>
+          <button class="btn-split-caret" onclick="toggleAddMenu(event)" title="More options">▾</button>
+          <div class="btn-split-menu" id="add-user-menu">
+            <button onclick="openAddModal(); closeAddMenu()">
+              <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/></svg>
+              Add from user list
+            </button>
+            <div class="menu-divider"></div>
+            <button onclick="openCsvModal(); closeAddMenu()">
+              <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/></svg>
+              Bulk upload CSV
+            </button>
           </div>
         </div>
-        <div class="toolbar-right">
-          <button class="btn btn-default btn-sm" onclick="switchTab('csv')">Upload CSV</button>
-          <button class="btn btn-primary btn-sm" onclick="openModal('add-overlay')">+ Add User</button>
-        </div>
-      </div>
-
-      <table id="user-table">
-        <thead>
-          <tr>
-            <th>User</th>
-            <th>Added By</th>
-            <th>Date Added</th>
-            <th>Status</th>
-            <th style="width:80px;"></th>
-          </tr>
-        </thead>
-        <tbody id="user-tbody"></tbody>
-      </table>
-
-      <div class="empty-state" id="empty-state" style="display:none;">
-        <div style="color:#bbb; font-size:28px;">👥</div>
-        <p>No authorized users yet.<br>
-        Any user from this company can currently open a support ticket.<br>
-        <button class="btn btn-primary btn-sm" style="margin-top:12px;" onclick="openModal('add-overlay')">+ Add First User</button></p>
-      </div>
-
-      <div class="table-footer" id="table-footer">
-        <span id="footer-label"></span>
       </div>
     </div>
 
-    <!-- ── TAB: CSV Upload ────────────────────────────── -->
-    <div class="tab-pane" id="tab-csv">
+    <!-- USER TABLE -->
+    <table id="user-table">
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Added By</th>
+          <th>Date Added</th>
+          <th>Status</th>
+          <th style="width:80px;"></th>
+        </tr>
+      </thead>
+      <tbody id="user-tbody"></tbody>
+    </table>
 
-      <div class="banner banner-blue">
-        <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/></svg>
-        <span>For pre-deployment setup. Only email addresses from <strong>randstad.com</strong> and its sub-domains are accepted. Users already on the list are skipped automatically.</span>
-      </div>
+    <div class="empty-state" id="empty-state" style="display:none;">
+      <div style="color:#bbb; font-size:28px;">👥</div>
+      <p>No authorized users yet.<br>
+      Any user from this company can currently open a support ticket.<br>
+      <button class="btn btn-primary btn-sm" style="margin-top:12px;" onclick="openAddModal()">+ Add First User</button></p>
+    </div>
 
-      <p style="font-size:13px; color:#555; margin-bottom:12px;">
-        Upload a <code>.csv</code> file with an <strong>email</strong> column. A preview will be shown before any users are imported.
-        &nbsp;<button class="btn-link" onclick="downloadTemplate()">Download template CSV ↓</button>
-      </p>
-
-      <div class="upload-zone" id="upload-zone"
-        onclick="document.getElementById('csv-file-input').click()"
-        ondragover="dzOver(event,'upload-zone')"
-        ondragleave="dzOut(event,'upload-zone')"
-        ondrop="dzDrop(event,'upload-zone')">
-        <svg width="28" height="28" viewBox="0 0 16 16" fill="#F5A623"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/></svg>
-        <p>Drop your CSV here or <strong>click to browse</strong><br>
-          <span style="font-size:11.5px; color:#888;">.csv only · max 500 rows · must contain an <code>email</code> column</span>
-        </p>
-      </div>
-      <input type="file" id="csv-file-input" accept=".csv" onchange="handleCsvFile(event)">
-
-      <div id="csv-preview" style="display:none;">
-        <div class="csv-preview-header">
-          <strong id="csv-count-label"></strong>
-          <button class="btn btn-primary btn-sm" id="csv-import-btn" onclick="doImport()">Import valid users</button>
-        </div>
-        <div id="csv-rows"></div>
-      </div>
-
-    </div><!-- /tab-csv -->
+    <div class="table-footer" id="table-footer">
+      <span id="footer-label"></span>
+    </div>
 
   </main>
 </div>
@@ -503,6 +481,48 @@
       <span class="sel-count" id="sel-count"></span>
       <button class="btn btn-default" onclick="closeModal('add-overlay')">Cancel</button>
       <button class="btn btn-primary" id="add-confirm-btn" onclick="confirmAdd()" disabled>Add Selected</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     CSV UPLOAD MODAL
+════════════════════════════════════════════ -->
+<div class="overlay" id="csv-overlay">
+  <div class="modal modal-lg">
+    <div class="modal-head">
+      <h3>Bulk Upload Users (CSV)</h3>
+      <button class="modal-close" onclick="closeModal('csv-overlay')">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px; color:#555; margin-bottom:12px;">
+        Upload a <code>.csv</code> file with an <strong>email</strong> column. Only email addresses from
+        <strong>@randstad.com</strong> domains are accepted. A preview will be shown before any users are imported.
+        &nbsp;<button class="btn-link" onclick="downloadTemplate()">Download template CSV ↓</button>
+      </p>
+
+      <div class="upload-zone" id="upload-zone"
+        onclick="document.getElementById('csv-file-input').click()"
+        ondragover="dzOver(event,'upload-zone')"
+        ondragleave="dzOut(event,'upload-zone')"
+        ondrop="dzDrop(event,'upload-zone')">
+        <svg width="28" height="28" viewBox="0 0 16 16" fill="#F5A623"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/></svg>
+        <p>Drop your CSV here or <strong>click to browse</strong><br>
+          <span style="font-size:11.5px; color:#888;">.csv only · max 500 rows · must contain an <code>email</code> column</span>
+        </p>
+      </div>
+      <input type="file" id="csv-file-input" accept=".csv" onchange="handleCsvFile(event)">
+
+      <div id="csv-preview" style="display:none;">
+        <div class="csv-preview-header">
+          <strong id="csv-count-label"></strong>
+        </div>
+        <div id="csv-rows"></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-default" onclick="closeModal('csv-overlay')">Cancel</button>
+      <button class="btn btn-primary" id="csv-import-btn" onclick="doImport()" style="display:none;">Import valid users</button>
     </div>
   </div>
 </div>
@@ -565,16 +585,23 @@ let selectedIds = new Set();
 let pendingRemoveId = null;
 let parsedCsvRows = [];
 
-/* ── Modal open / close (NOT using window.open/close) ──────── */
+/* ── Modal open / close ─────────────────────────────────────── */
 function openModal(id)  { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
-// Close on backdrop click
 document.addEventListener('click', e => {
-  if (e.target.classList.contains('overlay')) {
-    e.target.classList.remove('open');
-  }
+  if (e.target.classList.contains('overlay')) e.target.classList.remove('open');
+  if (!e.target.closest('#add-user-split')) closeAddMenu();
 });
+
+/* ── Add-user dropdown menu ─────────────────────────────────── */
+function toggleAddMenu(e) {
+  e.stopPropagation();
+  document.getElementById('add-user-menu').classList.toggle('open');
+}
+function closeAddMenu() {
+  document.getElementById('add-user-menu').classList.remove('open');
+}
 
 /* ── Table ──────────────────────────────────────────────────── */
 function renderTable() {
@@ -585,8 +612,6 @@ function renderTable() {
 
   document.getElementById('count-badge').textContent =
     `${authorized.length} user${authorized.length !== 1 ? 's' : ''}`;
-  document.getElementById('restriction-banner').style.display =
-    authorized.length ? 'flex' : 'none';
 
   const tbody  = document.getElementById('user-tbody');
   const empty  = document.getElementById('empty-state');
@@ -624,18 +649,6 @@ function renderTable() {
     </tr>
   `).join('');
 }
-
-/* ── Tabs ───────────────────────────────────────────────────── */
-function switchTab(name) {
-  document.querySelectorAll('.tab').forEach(t =>
-    t.classList.toggle('active', t.dataset.tab === name)
-  );
-  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-  document.getElementById('tab-' + name).classList.add('active');
-}
-document.querySelectorAll('.tab').forEach(t =>
-  t.addEventListener('click', () => switchTab(t.dataset.tab))
-);
 
 /* ── Add user modal ─────────────────────────────────────────── */
 function openAddModal() {
@@ -695,6 +708,15 @@ function confirmAdd() {
   closeModal('add-overlay');
   renderTable();
   showToast(`${n} user${n > 1 ? 's' : ''} added to the authorized list.`, 'ok');
+}
+
+/* ── CSV modal ──────────────────────────────────────────────── */
+function openCsvModal() {
+  document.getElementById('csv-preview').style.display = 'none';
+  document.getElementById('csv-import-btn').style.display = 'none';
+  document.getElementById('csv-file-input').value = '';
+  parsedCsvRows = [];
+  openModal('csv-overlay');
 }
 
 /* ── Remove modal ───────────────────────────────────────────── */
@@ -778,7 +800,7 @@ function doImport() {
   document.getElementById('csv-preview').style.display = 'none';
   document.getElementById('csv-file-input').value = '';
   parsedCsvRows = [];
-  switchTab('active');
+  closeModal('csv-overlay');
   renderTable();
   showToast(`${valid.length} user${valid.length !== 1 ? 's' : ''} imported from CSV.`, 'ok');
 }
@@ -815,8 +837,6 @@ function showToast(msg, type = 'ok') {
 }
 
 /* ── Init ───────────────────────────────────────────────────── */
-// Wire up the Add User button correctly
-document.querySelector('.btn-primary[onclick="openModal(\'add-overlay\')"]');
 renderTable();
 </script>
 
