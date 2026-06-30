@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CSR – Authorized Support Users · DP-196322</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 13px;
+      background: #fff;
+      color: #111;
+    }
+
+    /* ── Top bar ───────────────────────────────────────────── */
+    .topbar {
+      height: 44px;
+      background: #F5A623;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .topbar-menu {
+      display: flex; align-items: center; gap: 6px;
+      color: #fff; font-size: 13px; font-weight: 600; cursor: pointer;
+      background: none; border: none;
+    }
+    .topbar-search {
+      display: flex; align-items: center; gap: 6px;
+      background: #fff; border-radius: 4px;
+      padding: 5px 10px; width: 220px;
+      font-size: 13px; color: #666;
+    }
+    .topbar-search input {
+      border: none; outline: none; background: transparent;
+      font-size: 13px; color: #111; width: 100%;
+    }
+    .topbar-logo {
+      position: absolute; left: 50%; transform: translateX(-50%);
+      display: flex; align-items: center; gap: 6px;
+      color: #fff; font-size: 14px; font-weight: 600;
+    }
+    .topbar-logo .star { font-size: 18px; }
+    .topbar-logo .divider { color: rgba(255,255,255,.5); margin: 0 4px; }
+    .topbar-logo .csr-label { font-size: 13px; font-weight: 400; }
+
+    /* ── Layout ────────────────────────────────────────────── */
+    .layout { display: flex; min-height: calc(100vh - 44px); }
+
+    /* ── Sidebar ───────────────────────────────────────────── */
+    .sidebar {
+      width: 220px;
+      background: #fff;
+      border-right: 1px solid #e5e7eb;
+      padding: 12px 0;
+      flex-shrink: 0;
+    }
+    .sidebar-section {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 14px 4px;
+      font-size: 12.5px; font-weight: 700; color: #111;
+      cursor: pointer; user-select: none;
+    }
+    .sidebar-section svg { color: #555; flex-shrink: 0; }
+    .sidebar a {
+      display: block;
+      padding: 4px 14px 4px 32px;
+      font-size: 13px; color: #1155cc;
+      text-decoration: none;
+    }
+    .sidebar a:hover { text-decoration: underline; }
+    .sidebar a.active { font-weight: 700; color: #111; text-decoration: none; }
+
+    /* ── Main ──────────────────────────────────────────────── */
+    .main { flex: 1; padding: 20px 28px 60px; overflow-y: auto; }
+
+    /* ── Page title ────────────────────────────────────────── */
+    .page-title { font-size: 20px; font-weight: 400; margin-bottom: 16px; color: #111; }
+
+    /* ── Company nav bar (dot-separated links) ─────────────── */
+    .company-nav {
+      font-size: 13px; color: #111; margin-bottom: 16px; line-height: 1.8;
+    }
+    .company-nav a { color: #1155cc; text-decoration: none; }
+    .company-nav a:hover { text-decoration: underline; }
+    .company-nav .sep { color: #555; margin: 0 3px; }
+    .company-nav .active-link { color: #111; font-weight: 600; }
+
+    /* ── Section heading ───────────────────────────────────── */
+    .section-heading {
+      font-size: 15px; font-weight: 700; margin-bottom: 4px; color: #111;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .section-sub {
+      font-size: 12.5px; color: #555; line-height: 1.55; margin-bottom: 14px;
+    }
+
+    /* ── Labels / field layout ─────────────────────────────── */
+    .field-label { font-size: 12px; color: #555; margin-bottom: 2px; margin-top: 14px; }
+    .field-value { font-size: 13px; color: #111; }
+
+    /* ── Info banners ──────────────────────────────────────── */
+    .banner {
+      display: flex; align-items: flex-start; gap: 8px;
+      padding: 8px 12px; font-size: 12.5px; line-height: 1.5;
+      margin-bottom: 12px; border-left: 3px solid;
+    }
+    .banner-blue  { background: #f0f4ff; border-color: #4285f4; color: #1a3a8f; }
+    .banner-amber { background: #fffbf0; border-color: #F5A623; color: #7a4f00; }
+    .banner svg { flex-shrink: 0; margin-top: 1px; }
+
+    /* ── RBAC notice ───────────────────────────────────────── */
+    .rbac-note {
+      font-size: 12px; color: #555; background: #f9f9f9;
+      border: 1px solid #e0e0e0; border-radius: 3px;
+      padding: 6px 10px; margin-bottom: 12px;
+      display: flex; align-items: center; gap: 6px;
+    }
+
+    /* ── Toolbar ───────────────────────────────────────────── */
+    .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+    .toolbar-left, .toolbar-right { display: flex; align-items: center; gap: 8px; }
+
+    /* ── Inputs ────────────────────────────────────────────── */
+    .input {
+      padding: 5px 8px; border: 1px solid #ccc; border-radius: 3px;
+      font-size: 13px; outline: none; color: #111;
+    }
+    .input:focus { border-color: #4285f4; box-shadow: 0 0 0 2px rgba(66,133,244,.15); }
+    .search-wrap { position: relative; }
+    .search-wrap .icon { position: absolute; left: 7px; top: 50%; transform: translateY(-50%); color: #999; }
+    .input.with-icon { padding-left: 26px; }
+
+    /* ── Buttons ───────────────────────────────────────────── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 5px 12px; border-radius: 3px;
+      font-size: 13px; font-weight: 500; cursor: pointer;
+      border: 1px solid transparent;
+    }
+    .btn:disabled { opacity: .4; cursor: not-allowed; }
+    .btn-primary  { background: #F5A623; color: #fff; border-color: #F5A623; }
+    .btn-primary:hover:not(:disabled)  { background: #e0941a; }
+    .btn-default  { background: #fff; color: #333; border-color: #ccc; }
+    .btn-default:hover:not(:disabled)  { background: #f5f5f5; }
+    .btn-link     { background: none; border: none; color: #1155cc; font-size: 13px; cursor: pointer; padding: 0; }
+    .btn-link:hover { text-decoration: underline; }
+    .btn-danger   { background: #fff; color: #c0392b; border-color: #e0b0b0; }
+    .btn-danger:hover:not(:disabled)   { background: #fdf0f0; }
+    .btn-sm { padding: 3px 9px; font-size: 12px; }
+
+    /* ── Split / dropdown button ───────────────────────────── */
+    .btn-split { display: inline-flex; position: relative; }
+    .btn-split .btn-split-main {
+      border-radius: 3px 0 0 3px; border-right: 1px solid rgba(255,255,255,.35);
+    }
+    .btn-split .btn-split-caret {
+      border-radius: 0 3px 3px 0; padding: 5px 8px;
+      background: #F5A623; color: #fff; border: 1px solid #F5A623;
+      cursor: pointer; font-size: 11px;
+    }
+    .btn-split .btn-split-caret:hover { background: #e0941a; border-color: #e0941a; }
+    .btn-split-menu {
+      position: absolute; top: calc(100% + 4px); right: 0;
+      background: #fff; border: 1px solid #ddd; border-radius: 3px;
+      box-shadow: 0 4px 12px rgba(0,0,0,.12);
+      min-width: 190px; z-index: 50;
+      display: none;
+    }
+    .btn-split-menu.open { display: block; }
+    .btn-split-menu button {
+      display: flex; align-items: center; gap: 8px;
+      width: 100%; padding: 9px 14px;
+      background: none; border: none; text-align: left;
+      font-size: 13px; color: #111; cursor: pointer;
+    }
+    .btn-split-menu button:hover { background: #fffcf5; }
+    .btn-split-menu button svg { color: #888; flex-shrink: 0; }
+    .btn-split-menu .menu-divider { border-top: 1px solid #f0f0f0; }
+
+    /* ── Table ─────────────────────────────────────────────── */
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    thead th {
+      background: #f5f5f5; padding: 7px 12px;
+      text-align: left; font-size: 12px; font-weight: 700;
+      color: #555; border: 1px solid #ddd;
+    }
+    tbody td { padding: 8px 12px; border: 1px solid #eee; vertical-align: middle; }
+    tbody tr:hover td { background: #fffdf5; }
+
+    .user-cell { display: flex; align-items: center; gap: 8px; }
+    .avatar { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; color: #fff; flex-shrink: 0; }
+    .u-name  { font-weight: 600; }
+    .u-email { font-size: 12px; color: #666; }
+
+    .empty-state { text-align: center; padding: 40px 20px; color: #888; border: 1px solid #eee; }
+    .empty-state p { margin-top: 8px; font-size: 13px; line-height: 1.6; }
+
+    .table-footer { display: flex; align-items: center; justify-content: space-between; padding: 6px 0 0; font-size: 12px; color: #666; }
+
+    /* ── Badge ─────────────────────────────────────────────── */
+    .badge { display: inline-flex; align-items: center; padding: 1px 7px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+    .badge-green  { background: #d4edda; color: #155724; }
+    .badge-gray   { background: #e9ecef; color: #495057; }
+    .badge-amber  { background: #fff3cd; color: #856404; }
+
+    /* ── Upload zone ───────────────────────────────────────── */
+    .upload-zone {
+      border: 2px dashed #F5A623; border-radius: 4px;
+      padding: 32px 20px; text-align: center;
+      background: #fffcf5; cursor: pointer; transition: .12s;
+    }
+    .upload-zone:hover, .upload-zone.over { background: #fff3d6; }
+    .upload-zone p { font-size: 13px; color: #555; line-height: 1.7; margin-top: 6px; }
+    .upload-zone strong { color: #c77d00; }
+    #csv-file-input { display: none; }
+
+    /* ── CSV preview ───────────────────────────────────────── */
+    .csv-preview-header { display: flex; align-items: center; justify-content: space-between; margin: 12px 0 8px; font-size: 13px; }
+    .csv-row { display: flex; align-items: center; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #f0f0f0; font-size: 12.5px; }
+    .csv-row:last-child { border-bottom: none; }
+    .csv-ok   { color: #155724; }
+    .csv-skip { color: #777; }
+    .csv-err  { color: #c0392b; }
+
+    /* ── Modal ─────────────────────────────────────────────── */
+    .overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.5);
+      display: none; align-items: center; justify-content: center; z-index: 200;
+    }
+    .overlay.open { display: flex; }
+    .modal {
+      background: #fff; border-radius: 4px;
+      width: 480px; max-height: 82vh;
+      display: flex; flex-direction: column;
+      box-shadow: 0 8px 32px rgba(0,0,0,.22);
+      overflow: hidden;
+    }
+    .modal.modal-sm { width: 400px; }
+    .modal.modal-lg { width: 560px; }
+    .modal-head {
+      padding: 14px 18px; border-bottom: 1px solid #e0e0e0;
+      display: flex; align-items: center; justify-content: space-between;
+      background: #f9f9f9;
+    }
+    .modal-head h3 { font-size: 14px; font-weight: 700; color: #111; }
+    .modal-close {
+      background: none; border: none; cursor: pointer;
+      color: #777; font-size: 20px; line-height: 1; padding: 0 2px;
+    }
+    .modal-close:hover { color: #111; }
+    .modal-body { padding: 16px 18px; overflow-y: auto; flex: 1; }
+    .modal-foot {
+      padding: 10px 18px; border-top: 1px solid #e0e0e0;
+      display: flex; justify-content: flex-end; align-items: center; gap: 8px;
+      background: #f9f9f9;
+    }
+    .modal-foot .sel-count { margin-right: auto; font-size: 12px; color: #666; }
+
+    /* ── Add-user list ─────────────────────────────────────── */
+    .user-opt {
+      display: flex; align-items: center; gap: 9px;
+      padding: 7px 8px; border-bottom: 1px solid #f0f0f0; cursor: pointer;
+    }
+    .user-opt:last-child { border-bottom: none; }
+    .user-opt:hover:not(.disabled) { background: #fffcf5; }
+    .user-opt.selected { background: #fff8e8; }
+    .user-opt.disabled { opacity: .55; cursor: default; }
+    .user-opt input[type=checkbox] { accent-color: #F5A623; flex-shrink: 0; }
+
+    /* ── Toast ─────────────────────────────────────────────── */
+    .toasts { position: fixed; bottom: 20px; right: 20px; z-index: 300; display: flex; flex-direction: column; gap: 6px; }
+    .toast {
+      padding: 10px 14px; border-radius: 3px; font-size: 13px;
+      color: #fff; box-shadow: 0 4px 12px rgba(0,0,0,.2);
+      min-width: 250px; display: flex; align-items: center; gap: 7px;
+      animation: tin .15s ease;
+    }
+    .toast-ok  { background: #2e7d32; }
+    .toast-err { background: #c0392b; }
+    @keyframes tin { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+    /* ── Divider ───────────────────────────────────────────── */
+    hr { border: none; border-top: 1px solid #eee; margin: 16px 0; }
+  </style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <button class="topbar-menu">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="white"><path d="M1 2.5h14M1 8h14M1 13.5h14" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
+    Menu
+  </button>
+  <div class="topbar-search">
+    <svg width="13" height="13" viewBox="0 0 16 16" fill="#999"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.116-.099zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg>
+    <input type="text" placeholder="Search CSR">
+  </div>
+  <div class="topbar-logo">
+    <span class="star">✦</span>
+    dialpad
+    <span class="divider">|</span>
+    <span class="csr-label">CSR Beta</span>
+  </div>
+</div>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-section">
+      <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><path d="M1 3l4 4 4-4"/></svg>
+      Entities
+    </div>
+    <a href="#">Companies</a>
+    <a href="#">A2P Brand Verifications</a>
+    <a href="#">A2P Campaigns Verifications</a>
+    <a href="#">Contacts</a>
+    <a href="#">Contact Centers</a>
+    <a href="#">Departments</a>
+    <a href="#">Fax Lines</a>
+    <a href="#">Offices</a>
+    <a href="#">Rooms</a>
+    <a href="#">Users</a>
+
+    <div class="sidebar-section" style="margin-top:8px;">
+      <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><path d="M1 3l4 4 4-4"/></svg>
+      Communications
+    </div>
+    <a href="#">Calls</a>
+    <a href="#">Digital Sessions</a>
+    <a href="#">Fax Messages</a>
+    <a href="#">Text Messages</a>
+    <a href="#">Video Calls</a>
+
+    <div class="sidebar-section" style="margin-top:8px;">
+      <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor"><path d="M1 3l4 4 4-4"/></svg>
+      Number Management
+    </div>
+    <a href="#">Dialpad Numbers</a>
+    <a href="#">Fax Area Codes</a>
+    <a href="#">FST Number Search</a>
+    <a href="#">Port Eligibility</a>
+    <a href="#">Port Requests</a>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+
+    <div class="page-title">Company Lookup</div>
+
+    <div class="field-label">Salesforce Account Name: Not linked</div>
+    <div class="field-label">Name</div>
+    <div class="field-value" style="margin-bottom:10px; font-size:14px; font-weight:600;">Randstad N.V.</div>
+
+    <!-- DOT-SEPARATED NAV -->
+    <div class="company-nav">
+      (<a href="#">Users</a><span class="sep">·</span>
+      <a href="#">Offices (23)</a><span class="sep">·</span>
+      <a href="#">Call Service Targets</a><span class="sep">·</span>
+      <a href="#">Departments/Call Centers/Coaching Teams</a><span class="sep">·</span>
+      <a href="#">Rooms</a><span class="sep">·</span>
+      <a href="#">Channels</a><span class="sep">·</span>
+      <a href="#">Dialpad #'s</a><span class="sep">·</span>
+      <a href="#">Verified #'s</a><span class="sep">·</span>
+      <a href="#">Ratings</a><span class="sep">·</span>
+      <a href="#">A2P</a><span class="sep">·</span>
+      <a href="#">Error Reports</a><span class="sep">·</span>
+      <a href="#">Fax Lines</a><span class="sep">·</span>
+      <a href="#">Stats</a><span class="sep">·</span>
+      <a href="#">Shared Contacts</a><span class="sep">·</span>
+      <a href="#">Port Requests V2</a><span class="sep">·</span>
+      <a href="#">Calls</a><span class="sep">·</span>
+      <a href="#">Feature Flags</a><span class="sep">·</span>
+      <span class="active-link">Authorized Support Users</span>)
+    </div>
+
+    <hr>
+
+    <!-- AUTHORIZED SUPPORT USERS SECTION -->
+    <div class="section-heading">
+      Authorized Support Users
+      <span class="badge badge-amber" id="count-badge">3 users</span>
+    </div>
+    <div class="section-sub">
+      Defines which users are permitted to open support tickets on behalf of this company.
+      If this list is <strong>empty</strong>, any user may open a ticket.
+      If <strong>non-empty</strong>, only listed users are allowed — support agents should verify callers against this list.
+    </div>
+
+    <!-- RBAC notice -->
+    <div class="rbac-note">
+      <svg width="12" height="12" viewBox="0 0 16 16" fill="#888"><path d="M8 1a2 2 0 0 1 2 2v1h1a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1V3a2 2 0 0 1 2-2zm1 3V3a1 1 0 0 0-2 0v1h2z"/></svg>
+      Requires <strong>COMPANY_SUPER_ADMIN</strong> permission to add or remove users.
+    </div>
+
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <div class="search-wrap">
+          <svg class="icon" width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.116-.099zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg>
+          <input class="input with-icon" style="width:230px;" type="text" placeholder="Filter by name or email…" id="user-search" oninput="renderTable()">
+        </div>
+      </div>
+      <div class="toolbar-right">
+        <!-- Split button: main action + dropdown caret -->
+        <div class="btn-split" id="add-user-split">
+          <button class="btn btn-primary btn-sm btn-split-main" onclick="openAddModal()">+ Add User</button>
+          <button class="btn-split-caret" onclick="toggleAddMenu(event)" title="More options">▾</button>
+          <div class="btn-split-menu" id="add-user-menu">
+            <button onclick="openAddModal(); closeAddMenu()">
+              <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/></svg>
+              Add from user list
+            </button>
+            <div class="menu-divider"></div>
+            <button onclick="openCsvModal(); closeAddMenu()">
+              <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/></svg>
+              Bulk upload CSV
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- USER TABLE -->
+    <table id="user-table">
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Added By</th>
+          <th>Date Added</th>
+          <th>Status</th>
+          <th style="width:80px;"></th>
+        </tr>
+      </thead>
+      <tbody id="user-tbody"></tbody>
+    </table>
+
+    <div class="empty-state" id="empty-state" style="display:none;">
+      <div style="color:#bbb; font-size:28px;">👥</div>
+      <p>No authorized users yet.<br>
+      Any user from this company can currently open a support ticket.<br>
+      <button class="btn btn-primary btn-sm" style="margin-top:12px;" onclick="openAddModal()">+ Add First User</button></p>
+    </div>
+
+    <div class="table-footer" id="table-footer">
+      <span id="footer-label"></span>
+    </div>
+
+  </main>
+</div>
+
+
+<!-- ════════════════════════════════════════════
+     ADD USER MODAL
+════════════════════════════════════════════ -->
+<div class="overlay" id="add-overlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Add Authorized Support User</h3>
+      <button class="modal-close" onclick="closeModal('add-overlay')">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:12.5px; color:#555; margin-bottom:10px;">
+        Select one or more active users from <strong>Randstad N.V.</strong>
+      </p>
+      <div class="search-wrap" style="margin-bottom:10px;">
+        <svg class="icon" width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.116-.099zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg>
+        <input class="input with-icon" style="width:100%;" type="text" id="add-search"
+          placeholder="Search by name or email…" oninput="renderAddList()">
+      </div>
+      <div id="add-user-list" style="max-height:320px; overflow-y:auto; border:1px solid #eee; border-radius:3px;"></div>
+    </div>
+    <div class="modal-foot">
+      <span class="sel-count" id="sel-count"></span>
+      <button class="btn btn-default" onclick="closeModal('add-overlay')">Cancel</button>
+      <button class="btn btn-primary" id="add-confirm-btn" onclick="confirmAdd()" disabled>Add Selected</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     CSV UPLOAD MODAL
+════════════════════════════════════════════ -->
+<div class="overlay" id="csv-overlay">
+  <div class="modal modal-lg">
+    <div class="modal-head">
+      <h3>Bulk Upload Users (CSV)</h3>
+      <button class="modal-close" onclick="closeModal('csv-overlay')">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px; color:#555; margin-bottom:12px;">
+        Upload a <code>.csv</code> file with an <strong>email</strong> column. Only email addresses from
+        <strong>@randstad.com</strong> domains are accepted. A preview will be shown before any users are imported.
+        &nbsp;<button class="btn-link" onclick="downloadTemplate()">Download template CSV ↓</button>
+      </p>
+
+      <div class="upload-zone" id="upload-zone"
+        onclick="document.getElementById('csv-file-input').click()"
+        ondragover="dzOver(event,'upload-zone')"
+        ondragleave="dzOut(event,'upload-zone')"
+        ondrop="dzDrop(event,'upload-zone')">
+        <svg width="28" height="28" viewBox="0 0 16 16" fill="#F5A623"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/></svg>
+        <p>Drop your CSV here or <strong>click to browse</strong><br>
+          <span style="font-size:11.5px; color:#888;">.csv only · max 500 rows · must contain an <code>email</code> column</span>
+        </p>
+      </div>
+      <input type="file" id="csv-file-input" accept=".csv" onchange="handleCsvFile(event)">
+
+      <div id="csv-preview" style="display:none;">
+        <div class="csv-preview-header">
+          <strong id="csv-count-label"></strong>
+        </div>
+        <div id="csv-rows"></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-default" onclick="closeModal('csv-overlay')">Cancel</button>
+      <button class="btn btn-primary" id="csv-import-btn" onclick="doImport()" style="display:none;">Import valid users</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     REMOVE CONFIRM MODAL
+════════════════════════════════════════════ -->
+<div class="overlay" id="remove-overlay">
+  <div class="modal modal-sm">
+    <div class="modal-head">
+      <h3>Remove authorized user?</h3>
+      <button class="modal-close" onclick="closeModal('remove-overlay')">×</button>
+    </div>
+    <div class="modal-body">
+      <p id="remove-text" style="font-size:13px; line-height:1.6;"></p>
+      <div class="banner banner-amber" style="margin-top:12px;">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/></svg>
+        <span>This user will no longer be permitted to open support tickets for this company.</span>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-default" onclick="closeModal('remove-overlay')">Cancel</button>
+      <button class="btn btn-danger" onclick="confirmRemove()">Remove</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toasts -->
+<div class="toasts" id="toasts"></div>
+
+
+<script>
+/* ── Data ───────────────────────────────────────────────────── */
+const COLORS = ['#c77d00','#1a6e3c','#0d5c9e','#6b2fa0','#c0392b','#0f766e'];
+const mkAvatar = (name, id) => {
+  const initials = name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+  return `<div class="avatar" style="background:${COLORS[id % COLORS.length]}">${initials}</div>`;
+};
+
+let authorized = [
+  { id:1, name:'Sylvie Beaumont',   email:'s.beaumont@randstad.com',   addedBy:'Nahuel Sposito', addedAt:'2026-06-28' },
+  { id:2, name:'Marc van der Berg', email:'m.vanderberg@randstad.com',  addedBy:'Nahuel Sposito', addedAt:'2026-06-28' },
+  { id:3, name:'Priya Nair',         email:'p.nair@randstad.com',        addedBy:'Suraj R M',      addedAt:'2026-06-29' },
+];
+
+const companyPool = [
+  { id:1,  name:'Sylvie Beaumont',    email:'s.beaumont@randstad.com' },
+  { id:2,  name:'Marc van der Berg',  email:'m.vanderberg@randstad.com' },
+  { id:3,  name:'Priya Nair',          email:'p.nair@randstad.com' },
+  { id:4,  name:'David Okonkwo',       email:'d.okonkwo@randstad.com' },
+  { id:5,  name:'Anika Schulz',        email:'a.schulz@randstad.com' },
+  { id:6,  name:'Thomas Müller',       email:'t.muller@randstad.com' },
+  { id:7,  name:'Li Wei',              email:'l.wei@randstad.com' },
+  { id:8,  name:'Fatima Al-Hassan',    email:'f.alhassan@randstad.com' },
+  { id:9,  name:'Carlos Rivera',       email:'c.rivera@randstad.com' },
+  { id:10, name:'Emma Lindqvist',      email:'e.lindqvist@randstad.com' },
+];
+
+let selectedIds = new Set();
+let pendingRemoveId = null;
+let parsedCsvRows = [];
+
+/* ── Modal open / close ─────────────────────────────────────── */
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+document.addEventListener('click', e => {
+  if (e.target.classList.contains('overlay')) e.target.classList.remove('open');
+  if (!e.target.closest('#add-user-split')) closeAddMenu();
+});
+
+/* ── Add-user dropdown menu ─────────────────────────────────── */
+function toggleAddMenu(e) {
+  e.stopPropagation();
+  document.getElementById('add-user-menu').classList.toggle('open');
+}
+function closeAddMenu() {
+  document.getElementById('add-user-menu').classList.remove('open');
+}
+
+/* ── Table ──────────────────────────────────────────────────── */
+function renderTable() {
+  const q = (document.getElementById('user-search').value || '').toLowerCase();
+  const rows = authorized.filter(u =>
+    u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q)
+  );
+
+  document.getElementById('count-badge').textContent =
+    `${authorized.length} user${authorized.length !== 1 ? 's' : ''}`;
+
+  const tbody  = document.getElementById('user-tbody');
+  const empty  = document.getElementById('empty-state');
+  const footer = document.getElementById('table-footer');
+
+  if (!rows.length) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+    footer.style.display = 'none';
+    return;
+  }
+
+  empty.style.display = 'none';
+  footer.style.display = 'flex';
+  document.getElementById('footer-label').textContent =
+    `Showing ${rows.length} of ${authorized.length} user${authorized.length !== 1 ? 's' : ''}`;
+
+  tbody.innerHTML = rows.map(u => `
+    <tr>
+      <td>
+        <div class="user-cell">
+          ${mkAvatar(u.name, u.id)}
+          <div>
+            <div class="u-name">${u.name}</div>
+            <div class="u-email">${u.email}</div>
+          </div>
+        </div>
+      </td>
+      <td style="color:#555;">${u.addedBy}</td>
+      <td style="color:#555;">${u.addedAt}</td>
+      <td><span class="badge badge-green">Active</span></td>
+      <td>
+        <button class="btn btn-danger btn-sm" onclick="promptRemove(${u.id})">Remove</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+/* ── Add user modal ─────────────────────────────────────────── */
+function openAddModal() {
+  selectedIds = new Set();
+  document.getElementById('add-search').value = '';
+  renderAddList();
+  updateAddBtn();
+  openModal('add-overlay');
+}
+
+function renderAddList() {
+  const q = document.getElementById('add-search').value.toLowerCase();
+  const authIds = new Set(authorized.map(u => u.id));
+  const rows = companyPool.filter(u =>
+    u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q)
+  );
+
+  document.getElementById('add-user-list').innerHTML = rows.length
+    ? rows.map(u => {
+        const already = authIds.has(u.id);
+        const sel = selectedIds.has(u.id);
+        return `
+          <div class="user-opt${already ? ' disabled' : ''}${sel ? ' selected' : ''}"
+               onclick="${already ? '' : `toggleSel(${u.id})`}">
+            <input type="checkbox" ${already || sel ? 'checked' : ''} ${already ? 'disabled' : ''}>
+            ${mkAvatar(u.name, u.id)}
+            <div>
+              <div class="u-name">${u.name}
+                ${already ? '<span class="badge badge-gray" style="font-size:10px;margin-left:4px;">Already added</span>' : ''}
+              </div>
+              <div class="u-email">${u.email}</div>
+            </div>
+          </div>`;
+      }).join('')
+    : '<p style="color:#888;font-size:12.5px;padding:10px;">No users match that search.</p>';
+}
+
+function toggleSel(id) {
+  selectedIds.has(id) ? selectedIds.delete(id) : selectedIds.add(id);
+  renderAddList();
+  updateAddBtn();
+}
+
+function updateAddBtn() {
+  const n = selectedIds.size;
+  document.getElementById('add-confirm-btn').disabled = n === 0;
+  document.getElementById('sel-count').textContent = n ? `${n} user${n > 1 ? 's' : ''} selected` : '';
+}
+
+function confirmAdd() {
+  const today = new Date().toISOString().slice(0, 10);
+  const added = companyPool.filter(u => selectedIds.has(u.id));
+  added.forEach(u => authorized.push({
+    id: u.id, name: u.name, email: u.email, addedBy: 'Suraj R M', addedAt: today
+  }));
+  const n = added.length;
+  closeModal('add-overlay');
+  renderTable();
+  showToast(`${n} user${n > 1 ? 's' : ''} added to the authorized list.`, 'ok');
+}
+
+/* ── CSV modal ──────────────────────────────────────────────── */
+function openCsvModal() {
+  document.getElementById('csv-preview').style.display = 'none';
+  document.getElementById('csv-import-btn').style.display = 'none';
+  document.getElementById('csv-file-input').value = '';
+  parsedCsvRows = [];
+  openModal('csv-overlay');
+}
+
+/* ── Remove modal ───────────────────────────────────────────── */
+function promptRemove(id) {
+  pendingRemoveId = id;
+  const u = authorized.find(u => u.id === id);
+  document.getElementById('remove-text').textContent =
+    `Remove ${u.name} (${u.email}) from the authorized support users list?`;
+  openModal('remove-overlay');
+}
+
+function confirmRemove() {
+  const u = authorized.find(u => u.id === pendingRemoveId);
+  authorized = authorized.filter(u => u.id !== pendingRemoveId);
+  pendingRemoveId = null;
+  closeModal('remove-overlay');
+  renderTable();
+  showToast(`${u.name} removed from the authorized list.`, 'ok');
+}
+
+/* ── CSV handling ───────────────────────────────────────────── */
+const ALLOWED_DOMAIN = 'randstad.com';
+
+function parseCsvText(text) {
+  const lines = text.trim().split(/\r?\n/);
+  const header = lines[0].split(',').map(h => h.trim().toLowerCase());
+  const emailIdx = header.indexOf('email');
+  if (emailIdx === -1) return null;
+
+  const authEmails = new Set(authorized.map(u => u.email.toLowerCase()));
+  return lines.slice(1).map(line => {
+    const email = (line.split(',')[emailIdx] || '').trim().replace(/"/g, '');
+    if (!email) return null;
+    const domain = email.split('@')[1] || '';
+    const domainOk = domain === ALLOWED_DOMAIN || domain.endsWith('.' + ALLOWED_DOMAIN);
+    if (!domainOk) return { email, status: 'err', reason: `Domain not allowed (must be @${ALLOWED_DOMAIN})` };
+    if (authEmails.has(email.toLowerCase())) return { email, status: 'skip', reason: 'Already in list' };
+    return { email, status: 'ok', reason: '' };
+  }).filter(Boolean);
+}
+
+function handleCsvFile(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const rows = parseCsvText(e.target.result);
+    if (!rows) { showToast('CSV must have an "email" column.', 'err'); return; }
+    parsedCsvRows = rows;
+    renderCsvPreview(rows);
+  };
+  reader.readAsText(file);
+}
+
+function renderCsvPreview(rows) {
+  const ok   = rows.filter(r => r.status === 'ok').length;
+  const skip = rows.filter(r => r.status === 'skip').length;
+  const err  = rows.filter(r => r.status === 'err').length;
+  document.getElementById('csv-preview').style.display = 'block';
+  document.getElementById('csv-count-label').textContent =
+    `${rows.length} rows parsed — ${ok} will be added, ${skip} already in list, ${err} invalid`;
+  document.getElementById('csv-import-btn').style.display = ok > 0 ? 'inline-flex' : 'none';
+  document.getElementById('csv-rows').innerHTML =
+    rows.slice(0, 15).map(r => `
+      <div class="csv-row">
+        <span>${r.email}</span>
+        <span class="${r.status === 'ok' ? 'csv-ok' : r.status === 'skip' ? 'csv-skip' : 'csv-err'}">
+          ${r.status === 'ok' ? '✓ Will be added' : r.status === 'skip' ? '— Already in list' : '✗ ' + r.reason}
+        </span>
+      </div>`).join('') +
+    (rows.length > 15 ? `<div class="csv-row" style="color:#999;">…and ${rows.length - 15} more rows</div>` : '');
+}
+
+function doImport() {
+  const today = new Date().toISOString().slice(0, 10);
+  const valid = parsedCsvRows.filter(r => r.status === 'ok');
+  valid.forEach((r, i) => {
+    const name = r.email.split('@')[0].replace(/\./g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    authorized.push({ id: 200 + i, name, email: r.email, addedBy: 'Suraj R M (CSV)', addedAt: today });
+  });
+  document.getElementById('csv-preview').style.display = 'none';
+  document.getElementById('csv-file-input').value = '';
+  parsedCsvRows = [];
+  closeModal('csv-overlay');
+  renderTable();
+  showToast(`${valid.length} user${valid.length !== 1 ? 's' : ''} imported from CSV.`, 'ok');
+}
+
+function downloadTemplate() {
+  const a = Object.assign(document.createElement('a'), {
+    href: URL.createObjectURL(new Blob(
+      ['email\ns.beaumont@randstad.com\nm.vanderberg@randstad.com\n'],
+      { type: 'text/csv' }
+    )),
+    download: 'authorized_support_users_template.csv',
+  });
+  a.click();
+}
+
+/* ── Drag-and-drop ──────────────────────────────────────────── */
+function dzOver(e, id) { e.preventDefault(); document.getElementById(id).classList.add('over'); }
+function dzOut(e, id)  { document.getElementById(id).classList.remove('over'); }
+function dzDrop(e, id) {
+  e.preventDefault();
+  document.getElementById(id).classList.remove('over');
+  const file = e.dataTransfer.files[0];
+  if (file) handleCsvFile({ target: { files: [file] } });
+}
+
+/* ── Toast ──────────────────────────────────────────────────── */
+function showToast(msg, type = 'ok') {
+  const el = Object.assign(document.createElement('div'), {
+    className: `toast toast-${type}`,
+    textContent: (type === 'ok' ? '✓  ' : '✕  ') + msg,
+  });
+  document.getElementById('toasts').appendChild(el);
+  setTimeout(() => el.remove(), 3500);
+}
+
+/* ── Init ───────────────────────────────────────────────────── */
+renderTable();
+</script>
+
+</body>
+</html>
