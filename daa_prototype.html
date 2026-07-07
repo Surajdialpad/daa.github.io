@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -253,6 +254,11 @@
     .email-body { padding: 22px 28px; font-size: 13px; color: #374151; line-height: 1.7; }
     .email-body p { margin-bottom: 12px; }
     .email-body h2 { font-size: 18px; font-weight: 700; color: #111827; margin-bottom: 14px; }
+    .email-body ul { margin: 0 0 12px 0; padding-left: 20px; }
+    .email-body li { margin-bottom: 6px; }
+    .email-link-line { text-align: center; margin: 18px 0; }
+    .email-link-line a { color: #7c3aed; font-weight: 600; text-decoration: none; }
+    .email-magic-url { text-align: center; font-size: 11px; color: #9ca3af; word-break: break-all; margin: -8px 0 18px; }
     .email-cta { text-align: center; margin: 20px 0; }
     .email-btn { display: inline-block; padding: 11px 28px; background: #7c3aed; color: #fff; border-radius: 8px; font-size: 13px; font-weight: 600; text-decoration: none; }
     .email-btn-danger { background: #dc2626 !important; }
@@ -303,11 +309,11 @@
     <div class="email-frame">
       <div class="email-chrome">
         <div class="ec-dots"><div class="ec-dot ec-r"></div><div class="ec-dot ec-y"></div><div class="ec-dot ec-g"></div></div>
-        <div class="ec-bar">Welcome to Dialpad's Certified Delivery Portal</div>
+        <div class="ec-bar">Your Dialpad Certification is Verified — Welcome to the Partner Console</div>
       </div>
       <div class="email-head">
         <div class="email-from">From: Dialpad &lt;no-reply@dialpad.com&gt;</div>
-        <div class="email-subject">Welcome to Dialpad's Certified Delivery Portal</div>
+        <div class="email-subject">Your Dialpad Certification is Verified — Welcome to the Partner Console</div>
         <div class="email-meta">To: alex.chen@aerolabs.com &nbsp;·&nbsp; Jun 18, 2026</div>
       </div>
       <div class="email-plain-hd">
@@ -317,19 +323,22 @@
         </div>
       </div>
       <div class="email-body">
-        <h2>Welcome to the Certified Delivery Portal</h2>
         <p>Hi <strong>Alex</strong>,</p>
-        <p>You have been successfully activated as a <strong>Certified Partner Manager</strong> on Dialpad's Unified Delivery Portal (UDP). You can now request delegated admin access to your managed customers' Dialpad accounts to provide support and configuration on their behalf.</p>
-        <p>With Delegated Account Access (DAA), your customers retain full control — they must approve every access request, and they can revoke access at any time.</p>
-        <div class="email-info">
-          <div class="ei-row"><span class="ei-k">Portal</span><span class="ei-v">Unified Delivery Portal (UDP)</span></div>
-          <div class="ei-row"><span class="ei-k">Your Role</span><span class="ei-v">Certified Partner Manager — Aerolabs</span></div>
-          <div class="ei-row"><span class="ei-k">Feature Enabled</span><span class="ei-v">Delegated Account Access (DAA)</span></div>
+        <p>Congratulations on earning your Dialpad Certification—an exciting milestone, and a testament to your expertise! 🎉</p>
+        <p>We're thrilled to let you know that your certification has been verified, and you now have access to the Dialpad Certified Delivery Program (CDP) as a Partner Admin for <strong>Aerolabs</strong>.</p>
+        <p>With UDP, you'll be able to:</p>
+        <ul>
+          <li>Seamlessly request access to customer accounts for provisioning</li>
+          <li>Configure and manage customer deployments with confidence</li>
+          <li>Track provisioning progress and access status in real time</li>
+        </ul>
+        <p>To get started, simply use the secure link below to access your Partner Console:</p>
+        <div class="email-link-line">
+          <a href="#" onclick="goToScreen('pm',2);return false;">👉 Access the Unified Delivery Portal</a>
         </div>
-        <div class="email-cta">
-          <a href="#" class="email-btn" onclick="goToScreen('pm',2);return false;">Access the Portal →</a>
-        </div>
-        <p style="font-size:12px;color:#9ca3af;">If you didn't expect this invitation, please contact your Dialpad account manager.</p>
+        <p>We're excited to have you onboard and can't wait to see the impact you'll make delivering great experiences for your customers. If you need anything along the way, we're here to help.</p>
+        <p>Welcome aboard!</p>
+        <p>Best regards,<br/>The Dialpad Partner Team<br/>Dialpad Unified Delivery Portal</p>
       </div>
       <div class="email-foot">© 2026 Dialpad, Inc. · San Ramon, CA &nbsp;·&nbsp; <a href="#">Unsubscribe</a></div>
     </div>
@@ -388,8 +397,7 @@
       <h2>Accept Terms of Service</h2>
       <p class="modal-sub">Before accessing the Certified Delivery Portal for the first time, please review and accept the terms below.</p>
       <div class="login-tc-box">
-        By accessing the Certified Delivery Portal, you warrant that you have received approval from managed customers for the administration of their accounts. You agree to use access solely for authorised support and configuration activities, maintain strict confidentiality of all customer data, not share or sub-delegate credentials under any circumstances, and comply with all applicable data protection regulations including GDPR and CCPA. Dialpad reserves the right to audit access activity and revoke portal access if these terms are violated. <a href="#" style="color:#7c3aed;">View full terms →</a>
-      </div>
+        By accessing the portal, you agree that these terms apply to all current and future customer accounts you manage. You warrant that you will only request and use access for authorized support and configuration activities. You agree to maintain strict confidentiality of all customer data, promptly report any unauthorized access, not share or sub-delegate credentials under any circumstances, and comply with all applicable data protection regulations (including GDPR and CCPA). Dialpad reserves the right to audit access activity and revoke your portal access if these terms are violated.      </div>
       <label class="check-row" for="pm2-tc">
         <input type="checkbox" id="pm2-tc" onchange="document.getElementById('pm2-tc-btn').disabled=!this.checked" />
         <span>I have read and agree to the Dialpad Certified Delivery Portal Terms of Service.</span>
@@ -457,7 +465,7 @@
     <div class="modal">
       <button class="modal-close" onclick="document.getElementById('pm3-step1-modal').classList.remove('open')"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
       <h2>Request Customer Access</h2>
-      <p class="modal-sub">Step 1 of 2 — Select the customer company to initiate a Delegated Account Access (DAA) request.</p>
+      <p class="modal-sub">Select the customer company to initiate a Delegated Account Access (DAA) request.</p>
       <label>Select Customer Company</label>
       <div class="dd-wrap">
         <div id="pm3-trigger" class="dd-trigger" onclick="toggleDropdown('pm3-trigger','pm3-menu')" style="cursor:pointer;">
@@ -481,29 +489,10 @@
           </div>
         </div>
       </div>
-      <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="document.getElementById('pm3-step1-modal').classList.remove('open');document.getElementById('pm3-step2-modal').classList.add('open')">
-        Next Step
+      <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="document.getElementById('pm3-step1-modal').classList.remove('open');pm5Submit()">
+        Send Request
         <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
       </button>
-    </div>
-  </div>
-  <!-- Step 2 modal (inline on PM-3) -->
-  <div class="modal-overlay" id="pm3-step2-modal">
-    <div class="modal">
-      <button class="modal-close" onclick="document.getElementById('pm3-step2-modal').classList.remove('open')"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-      <h2>Legal Acceptance</h2>
-      <p class="modal-sub">Step 2 of 2 — Review the access terms for <strong>Innovatech Solutions</strong>.</p>
-      <div class="legal-box">
-        In requesting Delegated Account Access (DAA) for <strong>Innovatech Solutions</strong>, I acknowledge that I am seeking permission to manage their account configuration, perform troubleshooting, and communicate with Dialpad on their behalf. I understand that access is only granted upon explicit customer approval and may be revoked by the customer admin at any time. I agree to manage the account strictly in accordance with the customer's directions and assume full responsibility for all administrative actions performed under my credentials.
-      </div>
-      <label class="check-row" for="pm3-tc">
-        <input type="checkbox" id="pm3-tc" onchange="document.getElementById('pm3-submit-btn').disabled=!this.checked" />
-        <span>I have read and agree to the access terms for this request.</span>
-      </label>
-      <div class="modal-footer">
-        <button class="btn-cancel" onclick="document.getElementById('pm3-step2-modal').classList.remove('open');document.getElementById('pm3-step1-modal').classList.add('open')">Back</button>
-        <button class="btn-confirm" id="pm3-submit-btn" disabled onclick="pm5Submit()">Accept &amp; Send Request</button>
-      </div>
     </div>
   </div>
 </div>
@@ -545,7 +534,7 @@
     <div class="modal">
       <button class="modal-close" onclick="goToScreen('pm',3)"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
       <h2>Request Customer Access</h2>
-      <p class="modal-sub">Step 1 of 2 — Select the customer company to initiate a Delegated Account Access (DAA) request.</p>
+      <p class="modal-sub">Select the customer company to initiate a Delegated Account Access (DAA) request.</p>
       <label>Select Customer Company</label>
       <div class="dd-wrap">
         <div id="pm4-trigger" class="dd-trigger" onclick="toggleDropdown('pm4-trigger','pm4-menu')" style="cursor:pointer;">
@@ -569,8 +558,8 @@
           </div>
         </div>
       </div>
-      <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="goToScreen('pm',5)">
-        Next Step
+      <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="pm5Submit()">
+        Send Request
         <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
       </button>
     </div>
@@ -737,8 +726,8 @@
                 <div class="pd-cell">
                   <div class="pd-logo">A</div>
                   <div>
-                    <div class="pd-name">Alex Chen</div>
-                    <div class="pd-meta">Aerolabs &nbsp;·&nbsp; <span class="pd-cert">✓ Certified Partner</span></div>
+                    <div class="pd-name">Aerolabs</div>
+                    <div class="pd-meta">Alex Chen &nbsp;·&nbsp; alex.chen@aerolabs.com &nbsp;·&nbsp; <span class="pd-cert">✓ Certified Partner</span></div>
                   </div>
                 </div>
               </td>
@@ -756,8 +745,8 @@
                 <div class="pd-cell">
                   <div class="pd-logo">M</div>
                   <div>
-                    <div class="pd-name">Maria Lopez</div>
-                    <div class="pd-meta">TechCorp Inc &nbsp;·&nbsp; <span class="pd-cert">✓ Certified Partner</span></div>
+                    <div class="pd-name">TechCorp Inc</div>
+                    <div class="pd-meta">Maria Lopez &nbsp;·&nbsp; maria.lopez@techcorp.com &nbsp;·&nbsp; <span class="pd-cert">✓ Certified Partner</span></div>
                   </div>
                 </div>
               </td>
@@ -783,7 +772,7 @@
       <p class="modal-sub">Grant <strong>Alex Chen (Aerolabs)</strong> delegated admin access to your Dialpad account.</p>
       <div class="note-box note-info">
         <div class="note-title">🔒 Security Note</div>
-        Access is granted on a permanent basis. You retain full control and can revoke access at any time from this page.
+        Access remains active until you revoke it. You retain full control and can revoke this partner's access at any time from this page.
       </div>
       <div class="modal-footer">
         <button class="btn-cancel" onclick="document.getElementById('ca2-approve-modal').classList.remove('open')">Cancel</button>
@@ -848,13 +837,13 @@
           <thead><tr><th>Partner Details</th><th>Requested Purpose</th><th>Requested On</th><th>Actions</th></tr></thead>
           <tbody>
             <tr style="background:#f5f3ff;">
-              <td><div class="pd-cell"><div class="pd-logo">A</div><div><div class="pd-name">Alex Chen</div><div class="pd-meta">Aerolabs &nbsp;·&nbsp; <span class="pd-cert">✓ Certified Partner</span></div></div></div></td>
+              <td><div class="pd-cell"><div class="pd-logo">A</div><div><div class="pd-name">Aerolabs</div><div class="pd-meta">Alex Chen &nbsp;·&nbsp; alex.chen@aerolabs.com &nbsp;·&nbsp; <span class="pd-cert">✓ Certified Partner</span></div></div></div></td>
               <td style="font-size:12px;color:#374151;">Account support &amp; configuration</td>
               <td style="font-size:12px;color:#6b7280;">Jun 18, 2026</td>
               <td><div class="td-actions"><button class="btn btn-danger btn-sm">Deny</button><button class="btn btn-primary btn-sm">Approve Access</button></div></td>
             </tr>
             <tr>
-              <td><div class="pd-cell"><div class="pd-logo">M</div><div><div class="pd-name">Maria Lopez</div><div class="pd-meta">TechCorp Inc &nbsp;·&nbsp; <span class="pd-cert">✓ Certified Partner</span></div></div></div></td>
+              <td><div class="pd-cell"><div class="pd-logo">M</div><div><div class="pd-name">TechCorp Inc</div><div class="pd-meta">Maria Lopez &nbsp;·&nbsp; maria.lopez@techcorp.com &nbsp;·&nbsp; <span class="pd-cert">✓ Certified Partner</span></div></div></div></td>
               <td style="font-size:12px;color:#374151;">Onboarding &amp; setup</td>
               <td style="font-size:12px;color:#6b7280;">Jun 17, 2026</td>
               <td><div class="td-actions"><button class="btn btn-danger btn-sm">Deny</button><button class="btn btn-primary btn-sm">Approve Access</button></div></td>
@@ -871,7 +860,7 @@
       <p class="modal-sub">Grant <strong>Alex Chen (Aerolabs)</strong> delegated admin access to your Dialpad account.</p>
       <div class="note-box note-info">
         <div class="note-title">🔒 Security Note</div>
-        Access is granted on a permanent basis. You retain full control and can revoke access at any time from this page.
+        Access remains active until you revoke it. You retain full control and can revoke this partner's access at any time from this page.
       </div>
       <div class="modal-footer">
         <button class="btn-cancel" onclick="goToScreen('ca',2)">Cancel</button>
@@ -918,13 +907,13 @@
           <thead><tr><th>Partner Details</th><th>Requested Purpose</th><th>Requested On</th><th>Actions</th></tr></thead>
           <tbody>
             <tr style="background:#fff5f5;">
-              <td><div class="pd-cell"><div class="pd-logo">A</div><div><div class="pd-name">Alex Chen</div><div class="pd-meta">Aerolabs &nbsp;·&nbsp; <span class="pd-cert">✓ Certified Partner</span></div></div></div></td>
+              <td><div class="pd-cell"><div class="pd-logo">A</div><div><div class="pd-name">Aerolabs</div><div class="pd-meta">Alex Chen &nbsp;·&nbsp; alex.chen@aerolabs.com &nbsp;·&nbsp; <span class="pd-cert">✓ Certified Partner</span></div></div></div></td>
               <td style="font-size:12px;color:#374151;">Account support &amp; configuration</td>
               <td style="font-size:12px;color:#6b7280;">Jun 18, 2026</td>
               <td><div class="td-actions"><button class="btn btn-danger btn-sm">Deny</button><button class="btn btn-primary btn-sm">Approve Access</button></div></td>
             </tr>
             <tr>
-              <td><div class="pd-cell"><div class="pd-logo">M</div><div><div class="pd-name">Maria Lopez</div><div class="pd-meta">TechCorp Inc &nbsp;·&nbsp; <span class="pd-cert">✓ Certified Partner</span></div></div></div></td>
+              <td><div class="pd-cell"><div class="pd-logo">M</div><div><div class="pd-name">TechCorp Inc</div><div class="pd-meta">Maria Lopez &nbsp;·&nbsp; maria.lopez@techcorp.com &nbsp;·&nbsp; <span class="pd-cert">✓ Certified Partner</span></div></div></div></td>
               <td style="font-size:12px;color:#374151;">Onboarding &amp; setup</td>
               <td style="font-size:12px;color:#6b7280;">Jun 17, 2026</td>
               <td><div class="td-actions"><button class="btn btn-danger btn-sm">Deny</button><button class="btn btn-primary btn-sm">Approve Access</button></div></td>
@@ -1058,7 +1047,7 @@
             <thead><tr><th>Company Name</th><th># of Users</th><th># of Offices</th><th>SKU</th><th>Licenses</th><th>Access Status</th><th>Actions</th></tr></thead>
             <tbody>
               <tr><td><a class="co-link">Aerolabs</a><span class="badge-yours">Your company</span></td><td>340</td><td>23</td><td><span class="sku">Pro</span></td><td>340 (0 available)</td><td><span class="status s-active"><span class="sd"></span>Active</span></td><td></td></tr>
-              <tr><td><a class="co-link">Innovatech Solutions</a></td><td>290</td><td>12</td><td><span class="sku">Standard</span></td><td>290 (50 available)</td><td><span class="status s-active"><span class="sd"></span>Active</span></td><td><button class="btn btn-secondary btn-sm" onclick="document.getElementById('pm9-add-users-modal').classList.add('open')">Add Partner Users</button></td></tr>
+              <tr><td><a class="co-link">Innovatech Solutions</a></td><td>290</td><td>12</td><td><span class="sku">Standard</span></td><td>290 (50 available)</td><td><span class="status s-active"><span class="sd"></span>Active</span></td><td><button class="btn btn-secondary btn-sm" onclick="document.getElementById('pm9-add-users-modal').classList.add('open')">Manage Team</button></td></tr>
             </tbody>
           </table>
           <div class="tfoot"><div class="show-ctrl">Show <select><option>25</option></select></div><div class="pg"><span class="pg-info">Showing 1–2</span><button class="pg-btn active">1</button></div></div>
@@ -1070,10 +1059,19 @@
   <div class="modal-overlay" id="pm9-add-users-modal">
     <div class="modal">
       <button class="modal-close" onclick="document.getElementById('pm9-add-users-modal').classList.remove('open')"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-      <h2>Add Partner Users</h2>
-      <p class="modal-sub">Adding users to <strong>Innovatech Solutions</strong>. Select from your organization below.</p>
+      <h2>Manage Team — Innovatech Solutions</h2>
+      <p class="modal-sub">Manage which of your team members have access to this customer.</p>
+
+      <label>Currently Added</label>
+      <div class="user-pick-list">
+        <div class="user-pick-item" id="pm9-team-jamie">
+          <div class="upi-info"><div class="upi-name">Jamie Park</div><div class="upi-email">jamie.park@aerolabs.com</div></div>
+          <button class="btn btn-danger btn-sm" onclick="removeTeamMember('pm9-team-jamie','Jamie Park')">Remove</button>
+        </div>
+      </div>
+
+      <label style="margin-top:16px;">Add New Users</label>
       <div class="domain-note">🔒 Only users from your organization (aerolabs.com) are shown. Users from other organizations cannot be added.</div>
-      <label>Select Users</label>
       <div class="user-pick-list">
         <label class="user-pick-item">
           <input type="checkbox" />
@@ -1546,6 +1544,12 @@
     document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('open'));
     showToast('Access request sent to Innovatech Solutions — Pending Approval');
     setTimeout(() => goToScreen('pm', 6), 400);
+  }
+
+  function removeTeamMember(rowId, name) {
+    const row = document.getElementById(rowId);
+    if (row) row.remove();
+    showToast(name + ' removed from Innovatech Solutions');
   }
 
   function ca3Submit() {
