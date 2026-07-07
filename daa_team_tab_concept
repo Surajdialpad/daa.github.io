@@ -1,0 +1,253 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Concept — Team Tab (Per-User Access Management)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f9f9fb; height: 100vh; overflow: hidden; }
+
+  .concept-banner { background: #1e1b4b; color: #fff; font-size: 12px; padding: 8px 20px; text-align: center; }
+  .concept-banner strong { color: #c4b5fd; }
+
+  .app-layout { display: flex; width: 100%; height: calc(100vh - 34px); background: #f9f9fb; }
+  .app-sidebar { width: 52px; background: #fff; border-right: 1px solid #e8e8ec; display: flex; flex-direction: column; align-items: center; padding: 12px 0; gap: 4px; flex-shrink: 0; }
+  .sl { width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, #e040fb, #7c3aed); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; }
+  .sl svg { width: 18px; height: 18px; fill: white; }
+  .si { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #9ca3af; }
+  .si:hover { background: #f3f4f6; color: #4b5563; }
+  .si.active { background: #f3f0ff; color: #7c3aed; }
+  .sb { margin-top: auto; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .av { width: 32px; height: 32px; border-radius: 50%; background: #d1d5db; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #6b7280; }
+  .app-main { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: #fff; }
+  .app-topbar { padding: 10px 24px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #e8e8ec; flex-shrink: 0; min-height: 44px; }
+  .tb-title { font-size: 13px; font-weight: 500; color: #374151; }
+  .tb-sp { flex: 1; }
+  .tb-badge { font-size: 11px; padding: 3px 8px; border-radius: 4px; background: #f3f0ff; color: #7c3aed; font-weight: 600; }
+  .app-content { flex: 1; overflow-y: auto; padding: 24px 28px; }
+  h1 { font-size: 20px; font-weight: 600; color: #111827; margin-bottom: 4px; }
+  .page-sub { font-size: 13px; color: #6b7280; margin-bottom: 18px; }
+
+  .toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .search-box { display: flex; align-items: center; gap: 6px; border: 1px solid #d1d5db; border-radius: 8px; padding: 6px 12px; background: #fff; width: 220px; }
+  .search-box input { border: none; outline: none; font-size: 13px; color: #374151; width: 100%; background: transparent; }
+  .sp { flex: 1; }
+  .btn { display: inline-flex; align-items: center; gap: 6px; border-radius: 8px; padding: 8px 16px; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; border: none; }
+  .btn-primary { background: #7c3aed; color: #fff; }
+  .btn-primary:hover { background: #6d28d9; }
+  .btn-secondary { background: #fff; color: #374151; border: 1px solid #e5e7eb; }
+  .btn-secondary:hover { background: #f9fafb; }
+  .btn-sm { padding: 5px 12px !important; font-size: 12px !important; }
+
+  .table-wrap { border: 1px solid #e5e7eb; border-radius: 10px; overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; }
+  thead tr { background: #f9fafb; border-bottom: 1px solid #e5e7eb; }
+  th { padding: 9px 14px; font-size: 11px; font-weight: 600; color: #6b7280; text-align: left; white-space: nowrap; }
+  tbody tr { border-bottom: 1px solid #f3f4f6; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: #fafafa; }
+  td { padding: 11px 14px; font-size: 13px; color: #374151; vertical-align: middle; }
+
+  .pd-cell { display: flex; align-items: center; gap: 10px; }
+  .pd-logo { width: 32px; height: 32px; border-radius: 8px; background: #f3f0ff; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #7c3aed; font-size: 13px; flex-shrink: 0; }
+  .pd-name { font-size: 13px; font-weight: 600; color: #111827; }
+  .pd-meta { font-size: 11px; color: #6b7280; margin-top: 1px; }
+  .badge-you { font-size: 10px; font-weight: 500; color: #6b7280; background: #f3f4f6; padding: 1px 6px; border-radius: 4px; margin-left: 5px; }
+
+  .role-badge { font-size: 10px; border-radius: 4px; padding: 2px 7px; font-weight: 600; white-space: nowrap; }
+  .rb-pm { background: #f3f0ff; color: #7c3aed; }
+  .rb-pu { background: #f0fdf4; color: #15803d; }
+
+  .cust-badges { display: flex; flex-wrap: wrap; gap: 5px; }
+  .cust-badge { font-size: 11px; padding: 3px 9px; border-radius: 20px; background: #eff6ff; color: #1e40af; font-weight: 500; white-space: nowrap; }
+  .cust-none { font-size: 12px; color: #9ca3af; font-style: italic; }
+
+  /* Modal */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 200; align-items: center; justify-content: center; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: #fff; border-radius: 14px; padding: 26px; width: 440px; max-width: 95vw; box-shadow: 0 20px 60px rgba(0,0,0,0.18); position: relative; }
+  .modal-close { position: absolute; top: 14px; right: 14px; width: 26px; height: 26px; border: none; background: none; cursor: pointer; color: #9ca3af; border-radius: 6px; display: flex; align-items: center; justify-content: center; }
+  .modal-close:hover { background: #f3f4f6; color: #374151; }
+  .modal h2 { font-size: 16px; font-weight: 700; color: #111827; margin-bottom: 5px; }
+  .modal-sub { font-size: 13px; color: #6b7280; margin-bottom: 18px; line-height: 1.5; }
+  .modal label { display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 6px; }
+  .modal-footer { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
+  .btn-cancel { padding: 8px 18px; border: 1px solid #e5e7eb; border-radius: 8px; background: #fff; font-size: 13px; font-weight: 500; color: #374151; cursor: pointer; }
+  .btn-cancel:hover { background: #f9fafb; }
+  .btn-confirm { padding: 8px 18px; border: none; border-radius: 8px; background: #7c3aed; color: #fff; font-size: 13px; font-weight: 500; cursor: pointer; }
+  .btn-confirm:hover { background: #6d28d9; }
+
+  .form-input { width: 100%; padding: 9px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 13px; color: #111827; outline: none; margin-bottom: 16px; }
+  .form-input:focus { border-color: #7c3aed; }
+
+  .cust-toggle-list { border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; margin-bottom: 4px; }
+  .cust-toggle-item { display: flex; align-items: center; justify-content: space-between; padding: 11px 14px; border-bottom: 1px solid #f3f4f6; }
+  .cust-toggle-item:last-child { border-bottom: none; }
+  .cti-name { font-size: 13px; font-weight: 600; color: #111827; }
+  .cti-sub { font-size: 11px; color: #9ca3af; margin-top: 1px; }
+  .switch { position: relative; width: 36px; height: 20px; flex-shrink: 0; }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .switch-track { position: absolute; inset: 0; background: #d1d5db; border-radius: 20px; cursor: pointer; transition: 0.15s; }
+  .switch-track::before { content: ''; position: absolute; width: 16px; height: 16px; left: 2px; top: 2px; background: #fff; border-radius: 50%; transition: 0.15s; }
+  .switch input:checked + .switch-track { background: #7c3aed; }
+  .switch input:checked + .switch-track::before { transform: translateX(16px); }
+
+  .toast { display: none; position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #111827; color: #fff; padding: 11px 18px; border-radius: 8px; font-size: 13px; z-index: 400; gap: 8px; align-items: center; box-shadow: 0 4px 16px rgba(0,0,0,0.22); white-space: nowrap; }
+  .toast.show { display: flex; }
+  .toast-icon { color: #34d399; }
+  svg { flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<div class="concept-banner">💡 Concept preview — <strong>Team tab</strong> (per-user access management). Dummy data only, not wired into the main prototype.</div>
+
+<div class="app-layout">
+  <div class="app-sidebar">
+    <div class="sl"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg></div>
+    <div class="si"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg></div>
+    <div class="si active"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
+    <div class="sb"><div class="av">AC</div></div>
+  </div>
+  <div class="app-main">
+    <div class="app-topbar">
+      <span class="tb-title">UDP — Partner Portal</span>
+      <span class="tb-sp"></span>
+      <span class="tb-badge">Aerolabs Partner</span>
+    </div>
+    <div class="app-content">
+      <h1>Team</h1>
+      <p class="page-sub">Manage your team members and which customer accounts they can access.</p>
+
+      <div class="toolbar">
+        <div class="search-box"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Search team members" /></div>
+        <div class="sp"></div>
+        <button class="btn btn-primary" onclick="document.getElementById('invite-modal').classList.add('open')">+ Invite Team Member</button>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Team Member</th><th>Role</th><th>Customer Access</th><th></th></tr></thead>
+          <tbody>
+            <tr>
+              <td><div class="pd-cell"><div class="pd-logo">A</div><div><div class="pd-name">Alex Chen <span class="badge-you">You</span></div><div class="pd-meta">alex.chen@aerolabs.com</div></div></div></td>
+              <td><span class="role-badge rb-pm">Partner Manager</span></td>
+              <td><div class="cust-badges"><span class="cust-badge">Innovatech Solutions</span></div></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td><div class="pd-cell"><div class="pd-logo">J</div><div><div class="pd-name">Jamie Park</div><div class="pd-meta">jamie.park@aerolabs.com</div></div></div></td>
+              <td><span class="role-badge rb-pu">Partner User</span></td>
+              <td><div class="cust-badges"><span class="cust-badge">Innovatech Solutions</span></div></td>
+              <td><button class="btn btn-secondary btn-sm" onclick="openManage('Jamie Park','jamie.park@aerolabs.com', ['Innovatech Solutions'])">Manage Access</button></td>
+            </tr>
+            <tr>
+              <td><div class="pd-cell"><div class="pd-logo">S</div><div><div class="pd-name">Sam Rivera</div><div class="pd-meta">sam.rivera@aerolabs.com</div></div></div></td>
+              <td><span class="role-badge rb-pu">Partner User</span></td>
+              <td><span class="cust-none">No access yet</span></td>
+              <td><button class="btn btn-secondary btn-sm" onclick="openManage('Sam Rivera','sam.rivera@aerolabs.com', [])">Manage Access</button></td>
+            </tr>
+            <tr>
+              <td><div class="pd-cell"><div class="pd-logo">C</div><div><div class="pd-name">Chris Wong</div><div class="pd-meta">chris.wong@aerolabs.com</div></div></div></td>
+              <td><span class="role-badge rb-pu">Partner User</span></td>
+              <td><span class="cust-none">No access yet</span></td>
+              <td><button class="btn btn-secondary btn-sm" onclick="openManage('Chris Wong','chris.wong@aerolabs.com', [])">Manage Access</button></td>
+            </tr>
+            <tr>
+              <td><div class="pd-cell"><div class="pd-logo">P</div><div><div class="pd-name">Priya Nair</div><div class="pd-meta">priya.nair@aerolabs.com</div></div></div></td>
+              <td><span class="role-badge rb-pu">Partner User</span></td>
+              <td><div class="cust-badges"><span class="cust-badge">TechCorp Inc</span></div></td>
+              <td><button class="btn btn-secondary btn-sm" onclick="openManage('Priya Nair','priya.nair@aerolabs.com', ['TechCorp Inc'])">Manage Access</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Manage Access modal -->
+<div class="modal-overlay" id="manage-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeManage()"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    <h2 id="manage-title">Manage Access</h2>
+    <p class="modal-sub" id="manage-sub">Toggle which of your approved customer accounts this person can access.</p>
+    <label>Approved Customers</label>
+    <div class="cust-toggle-list" id="manage-list"></div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeManage()">Cancel</button>
+      <button class="btn-confirm" onclick="saveManage()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- Invite Team Member modal -->
+<div class="modal-overlay" id="invite-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="document.getElementById('invite-modal').classList.remove('open')"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    <h2>Invite Team Member</h2>
+    <p class="modal-sub">Invite a colleague from your organization (aerolabs.com) to join UDP. They'll be added with no customer access by default — grant access from the Team list once they've joined.</p>
+    <label for="invite-name">Full Name</label>
+    <input id="invite-name" class="form-input" type="text" placeholder="e.g. Taylor Kim" />
+    <label for="invite-email">Work Email</label>
+    <input id="invite-email" class="form-input" type="email" placeholder="e.g. taylor.kim@aerolabs.com" />
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="document.getElementById('invite-modal').classList.remove('open')">Cancel</button>
+      <button class="btn-confirm" onclick="sendInvite()">Send Invite</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <svg class="toast-icon" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="toast-msg">Done</span>
+</div>
+
+<script>
+  // Dummy set of customers this partner org (Aerolabs) has been approved for
+  const APPROVED_CUSTOMERS = ['Innovatech Solutions', 'TechCorp Inc'];
+  let currentUser = null;
+
+  function openManage(name, email, currentAccess) {
+    currentUser = name;
+    document.getElementById('manage-title').textContent = 'Manage Access — ' + name;
+    document.getElementById('manage-sub').textContent = 'Toggle which of your approved customer accounts ' + name + ' can access.';
+    const list = document.getElementById('manage-list');
+    list.innerHTML = APPROVED_CUSTOMERS.map(c => {
+      const checked = currentAccess.includes(c) ? 'checked' : '';
+      return '<div class="cust-toggle-item"><div><div class="cti-name">' + c + '</div><div class="cti-sub">' + email + '</div></div>' +
+        '<label class="switch"><input type="checkbox" ' + checked + '><span class="switch-track"></span></label></div>';
+    }).join('');
+    document.getElementById('manage-modal').classList.add('open');
+  }
+
+  function closeManage() {
+    document.getElementById('manage-modal').classList.remove('open');
+  }
+
+  function saveManage() {
+    closeManage();
+    showToast('Access updated for ' + currentUser);
+  }
+
+  function sendInvite() {
+    const name = document.getElementById('invite-name').value.trim() || 'New team member';
+    document.getElementById('invite-modal').classList.remove('open');
+    document.getElementById('invite-name').value = '';
+    document.getElementById('invite-email').value = '';
+    showToast('Invite sent to ' + name);
+  }
+
+  function showToast(msg) {
+    document.getElementById('toast-msg').textContent = msg;
+    const t = document.getElementById('toast');
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+</script>
+
+</body>
+</html>
