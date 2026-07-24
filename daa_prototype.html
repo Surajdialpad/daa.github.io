@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -136,6 +135,24 @@
     .upi-name { font-size: 13px; font-weight: 600; color: #111827; }
     .upi-email { font-size: 11px; color: #6b7280; }
     .domain-note { font-size: 11px; color: #6b7280; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 8px 12px; margin-bottom: 16px; }
+    .page-sub { font-size: 13px; color: #6b7280; margin-bottom: 18px; margin-top: -14px; }
+    .badge-you { font-size: 10px; font-weight: 500; color: #6b7280; background: #f3f4f6; padding: 1px 6px; border-radius: 4px; margin-left: 5px; }
+    .cust-badges { display: flex; flex-wrap: wrap; gap: 5px; }
+    .cust-badge { font-size: 11px; padding: 3px 9px; border-radius: 20px; background: #eff6ff; color: #1e40af; font-weight: 500; white-space: nowrap; }
+    .cust-none { font-size: 12px; color: #9ca3af; font-style: italic; }
+    .cust-toggle-list { border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; margin-bottom: 4px; }
+    .cust-toggle-item { display: flex; align-items: center; justify-content: space-between; padding: 11px 14px; border-bottom: 1px solid #f3f4f6; }
+    .cust-toggle-item:last-child { border-bottom: none; }
+    .cti-name { font-size: 13px; font-weight: 600; color: #111827; }
+    .cti-sub { font-size: 11px; color: #9ca3af; margin-top: 1px; }
+    .switch { position: relative; width: 36px; height: 20px; flex-shrink: 0; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .switch-track { position: absolute; inset: 0; background: #d1d5db; border-radius: 20px; cursor: pointer; transition: 0.15s; }
+    .switch-track::before { content: ''; position: absolute; width: 16px; height: 16px; left: 2px; top: 2px; background: #fff; border-radius: 50%; transition: 0.15s; }
+    .switch input:checked + .switch-track { background: #7c3aed; }
+    .switch input:checked + .switch-track::before { transform: translateX(16px); }
+    .form-input { width: 100%; padding: 9px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 13px; color: #111827; outline: none; margin-bottom: 16px; }
+    .form-input:focus { border-color: #7c3aed; }
 
     /* ── Tabs ── */
     .tabs { display: flex; border-bottom: 1px solid #e5e7eb; margin-bottom: 18px; }
@@ -284,10 +301,10 @@
     All Screens <span class="role-badge" id="badge-all">19</span>
   </div>
   <div class="role-tab" id="tab-pm" onclick="switchView('pm')">
-    <span class="screen-role-pill pill-pm">●</span> Partner Manager <span class="role-badge" id="badge-pm">11</span>
+    <span class="screen-role-pill pill-pm">●</span> Partner Manager <span class="role-badge" id="badge-pm">13</span>
   </div>
   <div class="role-tab" id="tab-ca" onclick="switchView('ca')">
-    <span class="screen-role-pill pill-ca">●</span> Customer Admin <span class="role-badge" id="badge-ca">8</span>
+    <span class="screen-role-pill pill-ca">●</span> Customer Admin <span class="role-badge" id="badge-ca">6</span>
   </div>
   <div class="sep"></div>
   <div class="screen-nav">
@@ -309,11 +326,11 @@
     <div class="email-frame">
       <div class="email-chrome">
         <div class="ec-dots"><div class="ec-dot ec-r"></div><div class="ec-dot ec-y"></div><div class="ec-dot ec-g"></div></div>
-        <div class="ec-bar">Your Dialpad Certification is Verified — Welcome to the Partner Console</div>
+        <div class="ec-bar">You now have access to the Unified Delivery Portal</div>
       </div>
       <div class="email-head">
         <div class="email-from">From: Dialpad &lt;no-reply@dialpad.com&gt;</div>
-        <div class="email-subject">Your Dialpad Certification is Verified — Welcome to the Partner Console</div>
+        <div class="email-subject">You now have access to the Unified Delivery Portal</div>
         <div class="email-meta">To: alex.chen@aerolabs.com &nbsp;·&nbsp; Jun 18, 2026</div>
       </div>
       <div class="email-plain-hd">
@@ -324,19 +341,19 @@
       </div>
       <div class="email-body">
         <p>Hi <strong>Alex</strong>,</p>
-        <p>Congratulations on earning your Dialpad Certification—an exciting milestone, and a testament to your expertise! 🎉</p>
-        <p>We're thrilled to let you know that you now have access to the Dialpad Certified Delivery Portal (CDP) as a Partner Admin for <strong>Aerolabs</strong>.</p>
+        <p>This email is to inform you that you now have access to the Unified Delivery Portal (UDP).</p>
         <p>With UDP, you'll be able to:</p>
         <ul>
           <li>Seamlessly request access to customer accounts for provisioning</li>
           <li>Configure and manage customer deployments with confidence</li>
           <li>Track provisioning progress and access status in real time</li>
         </ul>
-        <p>To get started, simply use the secure link below : </p>
+        <p>To get started, simply use the secure link below:</p>
         <div class="email-link-line">
           <a href="#" onclick="goToScreen('pm',2);return false;">👉 Access the Unified Delivery Portal</a>
         </div>
-        <p>We're excited to have you onboard and can't wait to see the impact you'll make delivering great experiences for your customers. If you need anything along the way, we're here to help.</p>
+        <p>We're excited to have you onboard and can't wait to see the impact you'll make delivering great experiences for your customers.</p>
+        <p>If you need anything along the way, we're here to help.</p>
         <p>Welcome aboard!</p>
         <p>Best regards,<br/>The Dialpad Partner Team<br/>Dialpad Unified Delivery Portal</p>
       </div>
@@ -421,6 +438,7 @@
       <div class="si active"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg></div>
       <div class="si"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg></div>
       <div class="si"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+      <div class="si" onclick="goToScreen('pm','team')" title="Team"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
       <div class="sb"><div class="av">AC</div></div>
     </div>
     <div class="app-main">
@@ -489,6 +507,8 @@
           </div>
         </div>
       </div>
+      <label>Reason for requesting access</label>
+      <textarea class="form-textarea" style="margin-bottom:18px;" placeholder="e.g. Setting up new user provisioning for the customer's support team."></textarea>
       <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="document.getElementById('pm3-step1-modal').classList.remove('open');pm5Submit()">
         Send Request
         <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
@@ -506,6 +526,7 @@
     <div class="app-sidebar">
       <div class="sl"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg></div>
       <div class="si active"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg></div>
+      <div class="si" onclick="goToScreen('pm','team')" title="Team"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
       <div class="sb"><div class="av">AC</div></div>
     </div>
     <div class="app-main">
@@ -558,6 +579,8 @@
           </div>
         </div>
       </div>
+      <label>Reason for requesting access</label>
+      <textarea class="form-textarea" style="margin-bottom:18px;" placeholder="e.g. Setting up new user provisioning for the customer's support team."></textarea>
       <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="pm5Submit()">
         Send Request
         <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
@@ -575,6 +598,7 @@
     <div class="app-sidebar">
       <div class="sl"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg></div>
       <div class="si active"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg></div>
+      <div class="si" onclick="goToScreen('pm','team')" title="Team"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
       <div class="sb"><div class="av">AC</div></div>
     </div>
     <div class="app-main">
@@ -612,6 +636,7 @@
     <div class="app-sidebar">
       <div class="sl"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg></div>
       <div class="si active"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg></div>
+      <div class="si" onclick="goToScreen('pm','team')" title="Team"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
       <div class="sb"><div class="av">AC</div></div>
     </div>
     <div class="app-main">
@@ -651,11 +676,11 @@
     <div class="email-frame">
       <div class="email-chrome">
         <div class="ec-dots"><div class="ec-dot ec-r"></div><div class="ec-dot ec-y"></div><div class="ec-dot ec-g"></div></div>
-        <div class="ec-bar">[Action Required] Partner Account Access Request Received</div>
+        <div class="ec-bar">Action Required: Partner Access Request for Dialpad Account</div>
       </div>
       <div class="email-head">
-        <div class="email-from">From: Dialpad &lt;no-reply@dialpad.com&gt;</div>
-        <div class="email-subject">[Action Required] Partner Account Access Request Received</div>
+        <div class="email-from">From: The Dialpad Team &lt;no-reply@dialpad.com&gt;</div>
+        <div class="email-subject">Action Required: Partner Access Request for Dialpad Account</div>
         <div class="email-meta">To: sarah.johnson@innovatech.io &nbsp;·&nbsp; Jun 18, 2026</div>
       </div>
       <div class="email-plain-hd">
@@ -665,20 +690,24 @@
         </div>
       </div>
       <div class="email-body">
-        <h2>Partner Access Request</h2>
         <p>Hi <strong>Sarah</strong>,</p>
-        <p>You have received a <strong>Delegated Admin Access (DAA)</strong> request from a certified Dialpad partner. Please review the details below and take action.</p>
+        <p><strong>Aerolabs</strong> has requested access to Innovatech Solutions' Dialpad account to perform provisioning and configuration activities on your behalf.</p>
+        <p>Request Details:</p>
         <div class="email-info">
-          <div class="ei-row"><span class="ei-k">Requesting Partner</span><span class="ei-v">Alex Chen — Aerolabs</span></div>
-          <div class="ei-row"><span class="ei-k">Partner Status</span><span class="ei-v" style="color:#059669;">✓ Certified Dialpad Partner</span></div>
-          <div class="ei-row"><span class="ei-k">Request Purpose</span><span class="ei-v">Account support &amp; configuration</span></div>
+          <div class="ei-row"><span class="ei-k">Partner Organization</span><span class="ei-v">Aerolabs</span></div>
+          <div class="ei-row"><span class="ei-k">Partner Manager</span><span class="ei-v">Alex Chen</span></div>
+          <div class="ei-row"><span class="ei-k">Reason for Access</span><span class="ei-v">To configure initial call routing and set up user extensions for the new support team deployment.</span></div>
           <div class="ei-row"><span class="ei-k">Requested On</span><span class="ei-v">Jun 18, 2026</span></div>
         </div>
-        <p>You are in full control. You can approve access with a time limit of your choosing, or deny this request entirely. The partner will not have any access until you approve.</p>
+        <p>To review this request, please visit your Admin Portal:</p>
         <div class="email-cta">
-          <a href="#" class="email-btn" onclick="goToScreen('ca',2);return false;">View Access Request →</a>
+          <a href="#" class="email-btn" onclick="goToScreen('ca',2);return false;">Review Access Request →</a>
         </div>
-        <p style="font-size:12px;color:#9ca3af;text-align:center;">This request will expire automatically in 72 hours if no action is taken.</p>
+        <p>Within the portal, you can approve or deny the request. You remain in full control at all times.</p>
+        <p>Once access is granted, you can revoke it instantly from the Partner Access section of your Admin Portal using the "Revoke Access" button.</p>
+        <p>If you did not expect this request, you may safely deny it.</p>
+        <p>If you have any questions, please contact Dialpad Support at support@dialpad.com.</p>
+        <p>Thank you,<br/>The Dialpad Team<br/>Unified Delivery Portal (UDP)</p>
       </div>
       <div class="email-foot">© 2026 Dialpad, Inc. &nbsp;·&nbsp; <a href="#">Manage notifications</a></div>
     </div>
@@ -951,11 +980,11 @@
     <div class="email-frame">
       <div class="email-chrome">
         <div class="ec-dots"><div class="ec-dot ec-r"></div><div class="ec-dot ec-y"></div><div class="ec-dot ec-g"></div></div>
-        <div class="ec-bar">Access to Innovatech Solutions has been approved</div>
+        <div class="ec-bar">Access Granted: You can now manage Innovatech Solutions</div>
       </div>
       <div class="email-head">
         <div class="email-from">From: Dialpad &lt;no-reply@dialpad.com&gt;</div>
-        <div class="email-subject">Access to Innovatech Solutions has been approved</div>
+        <div class="email-subject">Access Granted: You can now manage Innovatech Solutions</div>
         <div class="email-meta">To: alex.chen@aerolabs.com &nbsp;·&nbsp; Jun 19, 2026</div>
       </div>
       <div class="email-plain-hd">
@@ -965,15 +994,23 @@
         </div>
       </div>
       <div class="email-body">
-        <h2>Your access request has been approved ✓</h2>
         <p>Hi <strong>Alex</strong>,</p>
-        <p>Great news! <strong>Sarah Johnson</strong> at Innovatech Solutions has approved your Delegated Account Access request. You can now log in to UDP and manage their Dialpad account within the approved scope.</p>
+        <p>Great news!</p>
+        <p>Innovatech Solutions has approved your access request for account access through the Unified Delivery Portal.</p>
+        <p>You are now authorized to begin provisioning and configuration activities for this client using the Unified Delivery Portal.</p>
+        <p>Access Details:</p>
         <div class="email-info">
-          <div class="ei-row"><span class="ei-k">Company</span><span class="ei-v">Innovatech Solutions</span></div>
-          <div class="ei-row"><span class="ei-k">Approved By</span><span class="ei-v">Sarah Johnson (Company Admin)</span></div>
-          <div class="ei-row"><span class="ei-k">Access Type</span><span class="ei-v" style="color:#059669;font-weight:700;">Permanent Access</span></div>
+          <div class="ei-row"><span class="ei-k">Customer</span><span class="ei-v">Innovatech Solutions</span></div>
+          <div class="ei-row"><span class="ei-k">Access Status</span><span class="ei-v" style="color:#059669;font-weight:700;">Active</span></div>
+          <div class="ei-row"><span class="ei-k">Approval Date</span><span class="ei-v">Jun 19, 2026</span></div>
         </div>
-        <p>You may begin managing the account immediately. Access remains active until the customer admin chooses to revoke it.</p>
+        <p>To get started, simply follow the secure link below to visit your dashboard:</p>
+        <div class="email-link-line">
+          <a href="#" onclick="goToScreen('pm',9);return false;">👉 Access the Partner Console</a>
+        </div>
+        <p>Please verify that all administrative tasks remain compliant with the customer's specific policies and instructions.</p>
+        <p>If you need any assistance along the way, our team is here to help at support@dialpad.com.</p>
+        <p>Best regards,<br/>The Dialpad Partner Team</p>
       </div>
       <div class="email-foot">© 2026 Dialpad, Inc. &nbsp;·&nbsp; <a href="#">Manage notifications</a></div>
     </div>
@@ -989,11 +1026,11 @@
     <div class="email-frame">
       <div class="email-chrome">
         <div class="ec-dots"><div class="ec-dot ec-r"></div><div class="ec-dot ec-y"></div><div class="ec-dot ec-g"></div></div>
-        <div class="ec-bar">Your access request to Blue Sky Solutions was not approved</div>
+        <div class="ec-bar">Access Update: Your request for Blue Sky Solutions was not approved</div>
       </div>
       <div class="email-head">
-        <div class="email-from">From: Dialpad &lt;no-reply@dialpad.com&gt;</div>
-        <div class="email-subject">Your access request to Blue Sky Solutions was not approved</div>
+        <div class="email-from">From: The Dialpad Team &lt;no-reply@dialpad.com&gt;</div>
+        <div class="email-subject">Access Update: Your request for Blue Sky Solutions was not approved</div>
         <div class="email-meta">To: alex.chen@aerolabs.com &nbsp;·&nbsp; Jun 20, 2026</div>
       </div>
       <div class="email-plain-hd">
@@ -1003,19 +1040,20 @@
         </div>
       </div>
       <div class="email-body">
-        <h2>Your access request was not approved</h2>
         <p>Hi <strong>Alex</strong>,</p>
-        <p>The admin at <strong>Blue Sky Solutions</strong> has reviewed and declined your Delegated Account Access request. This is their prerogative — their account remains secure, and no access was granted.</p>
+        <p>Blue Sky Solutions has reviewed your access request and decided not to approve it at this time. This is their prerogative — no access has been granted, and their account remains secure.</p>
+        <p>Request Details:</p>
         <div class="email-info">
-          <div class="ei-row"><span class="ei-k">Company</span><span class="ei-v">Blue Sky Solutions</span></div>
+          <div class="ei-row"><span class="ei-k">Customer</span><span class="ei-v">Blue Sky Solutions</span></div>
+          <div class="ei-row"><span class="ei-k">Decision</span><span class="ei-v" style="color:#dc2626;font-weight:700;">Not Approved</span></div>
           <div class="ei-row"><span class="ei-k">Request Date</span><span class="ei-v">Jun 19, 2026</span></div>
-          <div class="ei-row"><span class="ei-k">Decision</span><span class="ei-v" style="color:#dc2626;">Not Approved</span></div>
           <div class="ei-row"><span class="ei-k">Reason</span><span class="ei-v" style="color:#6b7280;font-style:italic;">We handle support internally at this time.</span></div>
         </div>
         <p>You may submit a new request in the future if their needs change. If you believe this was in error, please reach out to your Dialpad account manager.</p>
-        <div class="email-cta">
-          <a href="#" class="email-btn" onclick="goToScreen('pm',9);return false;">Back to UDP →</a>
+        <div class="email-link-line">
+          <a href="#" onclick="goToScreen('pm',9);return false;">👉 Back to the Partner Console</a>
         </div>
+        <p>Best regards,<br/>The Dialpad Partner Team</p>
       </div>
       <div class="email-foot">© 2026 Dialpad, Inc. &nbsp;·&nbsp; <a href="#">Manage notifications</a></div>
     </div>
@@ -1031,6 +1069,7 @@
     <div class="app-sidebar">
       <div class="sl"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg></div>
       <div class="si active"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg></div>
+      <div class="si" onclick="goToScreen('pm','team')" title="Team"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
       <div class="sb"><div class="av">AC</div></div>
     </div>
     <div class="app-main">
@@ -1088,10 +1127,139 @@
       </div>
       <div class="modal-footer">
         <button class="btn-cancel" onclick="document.getElementById('pm9-add-users-modal').classList.remove('open')">Cancel</button>
-        <button class="btn-confirm" onclick="showToast('Users added — roles will be assigned by your CSR');document.getElementById('pm9-add-users-modal').classList.remove('open')">Add Users</button>
+        <button class="btn-confirm" onclick="pm9AddUsersSubmit()">Add Users</button>
       </div>
     </div>
   </div>
+</div>
+
+
+<!-- ─────────────────────────────────────────── -->
+<!-- PM-User-Granted · Partner-user Access Granted Email -->
+<!-- ─────────────────────────────────────────── -->
+<div id="screen-pm-user-granted" class="screen" data-role="pm" data-title="Partner-user Access Granted Email">
+  <div class="email-layout">
+    <div class="email-frame">
+      <div class="email-chrome">
+        <div class="ec-dots"><div class="ec-dot ec-r"></div><div class="ec-dot ec-y"></div><div class="ec-dot ec-g"></div></div>
+        <div class="ec-bar">Access Granted: You've been added to Innovatech Solutions</div>
+      </div>
+      <div class="email-head">
+        <div class="email-from">From: Dialpad &lt;no-reply@dialpad.com&gt;</div>
+        <div class="email-subject">Access Granted: You've been added to Innovatech Solutions</div>
+        <div class="email-meta">To: jamie.park@aerolabs.com &nbsp;·&nbsp; Jun 20, 2026</div>
+      </div>
+      <div class="email-plain-hd">
+        <div class="eph-logo">
+          <div class="eph-mark"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg></div>
+          <span class="eph-name">Dialpad</span>
+        </div>
+      </div>
+      <div class="email-body">
+        <p>Hi <strong>Jamie</strong>,</p>
+        <p>You've been granted access to <strong>Innovatech Solutions</strong> in the Unified Delivery Portal (UDP) by <strong>Alex Chen</strong> from Aerolabs.</p>
+        <p>You can now support provisioning and configuration activities for this customer based on your assigned permissions.</p>
+        <p>Access Details:</p>
+        <div class="email-info">
+          <div class="ei-row"><span class="ei-k">Customer</span><span class="ei-v">Innovatech Solutions</span></div>
+          <div class="ei-row"><span class="ei-k">Granted By</span><span class="ei-v">Alex Chen</span></div>
+          <div class="ei-row"><span class="ei-k">Partner Organization</span><span class="ei-v">Aerolabs</span></div>
+          <div class="ei-row"><span class="ei-k">Access Status</span><span class="ei-v" style="color:#059669;font-weight:700;">Active</span></div>
+          <div class="ei-row"><span class="ei-k">Effective Date</span><span class="ei-v">Jun 20, 2026</span></div>
+        </div>
+        <p>To get started, sign in to your Partner Console using the link below:</p>
+        <div class="email-link-line">
+          <a href="#" onclick="goToScreen('pm','team');return false;">👉 Access the Partner Console</a>
+        </div>
+        <p>Please ensure all actions taken in the account follow the customer's approved scope of work and internal security guidelines.</p>
+        <p>If you believe you received this in error or need help accessing the portal, please contact your Partner Manager or Dialpad Support at support@dialpad.com.</p>
+        <p>Best regards,<br/>The Dialpad Partner Team<br/>Unified Delivery Portal (UDP)</p>
+      </div>
+      <div class="email-foot">© 2026 Dialpad, Inc. &nbsp;·&nbsp; <a href="#">Manage notifications</a></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ─────────────────────────────────────────── -->
+<!-- PM-Team · Team (per-user access management) -->
+<!-- ─────────────────────────────────────────── -->
+<div id="screen-pm-team" class="screen" data-role="pm" data-title="Team">
+  <div class="app-layout">
+    <div class="app-sidebar">
+      <div class="sl"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg></div>
+      <div class="si" onclick="goToScreen('pm',9)" title="Companies"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg></div>
+      <div class="si active" title="Team"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
+      <div class="sb"><div class="av">AC</div></div>
+    </div>
+    <div class="app-main">
+      <div class="app-topbar">
+        <span class="tb-title">UDP — Partner Portal</span>
+        <span class="tb-sp"></span>
+        <span class="tb-badge">Aerolabs Partner</span>
+      </div>
+      <div class="app-content">
+        <h1>Team</h1>
+        <p class="page-sub">Manage your team members and which customer accounts they can access.</p>
+        <div class="toolbar">
+          <div class="search-box"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Search team members" /></div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Team Member</th><th>Role</th><th>Customer Access</th><th></th></tr></thead>
+            <tbody>
+              <tr>
+                <td><div class="pd-cell"><div class="pd-logo">A</div><div><div class="pd-name">Alex Chen <span class="badge-you">You</span></div><div class="pd-meta">alex.chen@aerolabs.com</div></div></div></td>
+                <td><span class="role-badge rb-pm">Partner Manager</span></td>
+                <td><div class="cust-badges"><span class="cust-badge">Innovatech Solutions</span></div></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td><div class="pd-cell"><div class="pd-logo">J</div><div><div class="pd-name">Jamie Park</div><div class="pd-meta">jamie.park@aerolabs.com</div></div></div></td>
+                <td><span class="role-badge rb-pu">Partner User</span></td>
+                <td><div class="cust-badges"><span class="cust-badge">Innovatech Solutions</span></div></td>
+                <td><button class="btn btn-secondary btn-sm" onclick="openTeamManage('Jamie Park','jamie.park@aerolabs.com', ['Innovatech Solutions'])">Manage Access</button></td>
+              </tr>
+              <tr>
+                <td><div class="pd-cell"><div class="pd-logo">S</div><div><div class="pd-name">Sam Rivera</div><div class="pd-meta">sam.rivera@aerolabs.com</div></div></div></td>
+                <td><span class="role-badge rb-pu">Partner User</span></td>
+                <td><span class="cust-none">No access yet</span></td>
+                <td><button class="btn btn-secondary btn-sm" onclick="openTeamManage('Sam Rivera','sam.rivera@aerolabs.com', [])">Manage Access</button></td>
+              </tr>
+              <tr>
+                <td><div class="pd-cell"><div class="pd-logo">C</div><div><div class="pd-name">Chris Wong</div><div class="pd-meta">chris.wong@aerolabs.com</div></div></div></td>
+                <td><span class="role-badge rb-pu">Partner User</span></td>
+                <td><span class="cust-none">No access yet</span></td>
+                <td><button class="btn btn-secondary btn-sm" onclick="openTeamManage('Chris Wong','chris.wong@aerolabs.com', [])">Manage Access</button></td>
+              </tr>
+              <tr>
+                <td><div class="pd-cell"><div class="pd-logo">P</div><div><div class="pd-name">Priya Nair</div><div class="pd-meta">priya.nair@aerolabs.com</div></div></div></td>
+                <td><span class="role-badge rb-pu">Partner User</span></td>
+                <td><div class="cust-badges"><span class="cust-badge">TechCorp Inc</span></div></td>
+                <td><button class="btn btn-secondary btn-sm" onclick="openTeamManage('Priya Nair','priya.nair@aerolabs.com', ['TechCorp Inc'])">Manage Access</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Manage Access modal (inline on PM-Team) -->
+  <div class="modal-overlay" id="pmteam-manage-modal">
+    <div class="modal">
+      <button class="modal-close" onclick="closeTeamManage()"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      <h2 id="pmteam-manage-title">Manage Access</h2>
+      <p class="modal-sub" id="pmteam-manage-sub">Toggle which of your approved customer accounts this person can access.</p>
+      <label>Approved Customers</label>
+      <div class="cust-toggle-list" id="pmteam-manage-list"></div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeTeamManage()">Cancel</button>
+        <button class="btn-confirm" onclick="saveTeamManage()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 
@@ -1127,45 +1295,45 @@
       </div>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>User</th><th>Role</th><th>Access Granted</th><th>Status</th><th>Actions</th></tr></thead>
+          <thead><tr><th>User</th><th>Role</th><th>Access Granted</th><th>Status</th><th></th></tr></thead>
           <tbody>
-            <tr class="org-group-hd"><td colspan="5">Aerolabs &nbsp;·&nbsp; 2 users</td></tr>
+            <tr class="org-group-hd"><td colspan="5"><div style="display:flex;align-items:center;justify-content:space-between;">Aerolabs &nbsp;·&nbsp; 2 users<button class="btn btn-danger btn-sm" style="text-transform:none;letter-spacing:normal;font-weight:500;" onclick="document.getElementById('ca5-revoke-modal').classList.add('open')">Revoke</button></div></td></tr>
             <tr>
               <td><div class="pd-cell"><div class="pd-logo">A</div><div><div class="pd-name">Alex Chen</div><div class="pd-meta">alex.chen@aerolabs.com</div></div></div></td>
               <td><span class="role-badge rb-pm">Partner Manager</span></td>
               <td style="font-size:12px;color:#6b7280;">Jun 19, 2026</td>
               <td><span class="status s-active"><span class="sd"></span>Active</span></td>
-              <td><div class="td-actions"><button class="btn btn-danger btn-sm" onclick="document.getElementById('ca5-revoke-modal').classList.add('open')">Revoke</button></div></td>
+              <td></td>
             </tr>
             <tr>
               <td><div class="pd-cell"><div class="pd-logo">J</div><div><div class="pd-name">Jamie Park</div><div class="pd-meta">jamie.park@aerolabs.com</div></div></div></td>
               <td><span class="role-badge rb-pu">Partner User</span></td>
               <td style="font-size:12px;color:#6b7280;">Jun 20, 2026</td>
               <td><span class="status s-active"><span class="sd"></span>Active</span></td>
-              <td><div class="td-actions"><button class="btn btn-danger btn-sm" onclick="document.getElementById('ca5-user-revoke-modal').classList.add('open')">Revoke</button></div></td>
+              <td></td>
             </tr>
-            <tr class="org-group-hd"><td colspan="5">TechCorp Inc &nbsp;·&nbsp; 1 user</td></tr>
+            <tr class="org-group-hd"><td colspan="5"><div style="display:flex;align-items:center;justify-content:space-between;">TechCorp Inc &nbsp;·&nbsp; 1 user<button class="btn btn-danger btn-sm" style="text-transform:none;letter-spacing:normal;font-weight:500;" onclick="document.getElementById('ca5-techcorp-revoke-modal').classList.add('open')">Revoke</button></div></td></tr>
             <tr>
               <td><div class="pd-cell"><div class="pd-logo">M</div><div><div class="pd-name">Maria Lopez</div><div class="pd-meta">maria.lopez@techcorp.com</div></div></div></td>
               <td><span class="role-badge rb-pm">Partner Manager</span></td>
               <td style="font-size:12px;color:#6b7280;">Jun 17, 2026</td>
               <td><span class="status s-active"><span class="sd"></span>Active</span></td>
-              <td><div class="td-actions"><button class="btn btn-danger btn-sm">Revoke</button></div></td>
+              <td></td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
   </div>
-  <!-- Revoke Access modal (inline on CA-5) -->
+  <!-- Revoke Access modal — Aerolabs (company-level, inline on CA-5) -->
   <div class="modal-overlay" id="ca5-revoke-modal">
     <div class="modal">
       <button class="modal-close" onclick="document.getElementById('ca5-revoke-modal').classList.remove('open')"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
       <h2>⊗ Revoke Partner Access</h2>
-      <p class="modal-sub">You are about to immediately revoke <strong>Alex Chen (Aerolabs)</strong>'s delegated admin access.</p>
+      <p class="modal-sub">You are about to immediately revoke <strong>Aerolabs</strong>'s delegated admin access. This will remove access for all 2 users: Alex Chen and Jamie Park.</p>
       <div class="note-box note-crit">
         <div class="note-title">🗑 Critical Action</div>
-        Revoking access is immediate and irreversible. Aerolabs will lose all access to your account right away and will be notified by email.
+        Revoking access is immediate and irreversible. Aerolabs will lose all access to your account right away and every affected user will be notified by email.
       </div>
       <label>Reason for revocation (optional)</label>
       <textarea class="form-textarea" placeholder="e.g. Support engagement has ended. Removing access for security."></textarea>
@@ -1175,21 +1343,21 @@
       </div>
     </div>
   </div>
-  <!-- Individual user revoke modal (inline on CA-5) -->
-  <div class="modal-overlay" id="ca5-user-revoke-modal">
+  <!-- Revoke Access modal — TechCorp Inc (company-level, inline on CA-5) -->
+  <div class="modal-overlay" id="ca5-techcorp-revoke-modal">
     <div class="modal">
-      <button class="modal-close" onclick="document.getElementById('ca5-user-revoke-modal').classList.remove('open')"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-      <h2>⊗ Revoke User Access</h2>
-      <p class="modal-sub">You are about to revoke <strong>Jamie Park (Aerolabs)</strong>'s access to your Innovatech Solutions account.</p>
-      <div class="note-box note-warn">
-        <div class="note-title">⚠ Please Note</div>
-        Jamie Park will be notified by email. Other Aerolabs users retain their access independently.
+      <button class="modal-close" onclick="document.getElementById('ca5-techcorp-revoke-modal').classList.remove('open')"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      <h2>⊗ Revoke Partner Access</h2>
+      <p class="modal-sub">You are about to immediately revoke <strong>TechCorp Inc</strong>'s delegated admin access. This will remove access for all 1 user: Maria Lopez.</p>
+      <div class="note-box note-crit">
+        <div class="note-title">🗑 Critical Action</div>
+        Revoking access is immediate and irreversible. TechCorp Inc will lose all access to your account right away and every affected user will be notified by email.
       </div>
       <label>Reason for revocation (optional)</label>
-      <textarea class="form-textarea" placeholder="e.g. Team member no longer supporting this account."></textarea>
+      <textarea class="form-textarea" placeholder="e.g. Support engagement has ended. Removing access for security."></textarea>
       <div class="modal-footer">
-        <button class="btn-cancel" onclick="document.getElementById('ca5-user-revoke-modal').classList.remove('open')">Cancel</button>
-        <button class="btn-confirm-danger" onclick="document.getElementById('ca5-user-revoke-modal').classList.remove('open');goToScreen('ca',9)">Revoke Access</button>
+        <button class="btn-cancel" onclick="document.getElementById('ca5-techcorp-revoke-modal').classList.remove('open')">Cancel</button>
+        <button class="btn-confirm-danger" onclick="document.getElementById('ca5-techcorp-revoke-modal').classList.remove('open');showToast('TechCorp Inc access revoked')">Confirm Revocation</button>
       </div>
     </div>
   </div>
@@ -1345,11 +1513,11 @@
     <div class="email-frame">
       <div class="email-chrome">
         <div class="ec-dots"><div class="ec-dot ec-r"></div><div class="ec-dot ec-y"></div><div class="ec-dot ec-g"></div></div>
-        <div class="ec-bar">Your access to Innovatech Solutions has been revoked</div>
+        <div class="ec-bar">Access Update: Your access to Innovatech Solutions has ended</div>
       </div>
       <div class="email-head">
         <div class="email-from">From: Dialpad &lt;no-reply@dialpad.com&gt;</div>
-        <div class="email-subject">Your delegated access to Innovatech Solutions has been revoked</div>
+        <div class="email-subject">Access Update: Your access to Innovatech Solutions has ended</div>
         <div class="email-meta">To: alex.chen@aerolabs.com &nbsp;·&nbsp; Jun 12, 2027</div>
       </div>
       <div class="email-plain-hd">
@@ -1359,57 +1527,19 @@
         </div>
       </div>
       <div class="email-body">
-        <h2>Your access has been revoked</h2>
         <p>Hi <strong>Alex</strong>,</p>
-        <p>The admin at <strong>Innovatech Solutions</strong> has revoked your Delegated Account Access. Your access to their Dialpad account has been removed immediately.</p>
+        <p>This is to inform you that your account access to the Innovatech Solutions account is no longer active.</p>
         <div class="email-info">
-          <div class="ei-row"><span class="ei-k">Company</span><span class="ei-v">Innovatech Solutions</span></div>
-          <div class="ei-row"><span class="ei-k">Revoked By</span><span class="ei-v">Sarah Johnson (Company Admin)</span></div>
-          <div class="ei-row"><span class="ei-k">Revoked On</span><span class="ei-v" style="color:#dc2626;">Jun 12, 2027</span></div>
-          <div class="ei-row"><span class="ei-k">Reason</span><span class="ei-v" style="color:#6b7280;font-style:italic;">Support engagement has ended.</span></div>
+          <div class="ei-row"><span class="ei-k">Reason</span><span class="ei-v">Access Revoked by Customer</span></div>
+          <div class="ei-row"><span class="ei-k">Effective Date</span><span class="ei-v" style="color:#dc2626;">Jun 12, 2027</span></div>
         </div>
-        <p>If you believe this was done in error, please reach out to your customer contact directly. You can re-request access from UDP if needed in the future.</p>
-        <div class="email-cta">
-          <a href="#" class="email-btn" onclick="goToScreen('pm',11);return false;">View in UDP →</a>
-        </div>
-      </div>
-      <div class="email-foot">© 2026 Dialpad, Inc. &nbsp;·&nbsp; <a href="#">Manage notifications</a></div>
-    </div>
-  </div>
-</div>
-
-
-<!-- ─────────────────────────────────────────── -->
-<!-- CA-9 · User Access Revoked Email            -->
-<!-- ─────────────────────────────────────────── -->
-<div id="screen-ca-9" class="screen" data-role="ca" data-title="User Access Revoked Email">
-  <div class="email-layout">
-    <div class="email-frame">
-      <div class="email-chrome">
-        <div class="ec-dots"><div class="ec-dot ec-r"></div><div class="ec-dot ec-y"></div><div class="ec-dot ec-g"></div></div>
-        <div class="ec-bar">Your access to Innovatech Solutions has been revoked</div>
-      </div>
-      <div class="email-head">
-        <div class="email-from">From: Dialpad &lt;no-reply@dialpad.com&gt;</div>
-        <div class="email-subject">Your access to Innovatech Solutions has been revoked</div>
-        <div class="email-meta">To: jamie.park@aerolabs.com &nbsp;·&nbsp; Jun 20, 2026</div>
-      </div>
-      <div class="email-plain-hd">
-        <div class="eph-logo">
-          <div class="eph-mark"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg></div>
-          <span class="eph-name">Dialpad</span>
-        </div>
-      </div>
-      <div class="email-body">
-        <h2>Your access has been revoked</h2>
-        <p>Hi <strong>Jamie</strong>,</p>
-        <p>The admin at <strong>Innovatech Solutions</strong> has revoked your delegated access to their Dialpad account. You will no longer be able to access or manage their account.</p>
-        <div class="email-info">
-          <div class="ei-row"><span class="ei-k">Company</span><span class="ei-v">Innovatech Solutions</span></div>
-          <div class="ei-row"><span class="ei-k">Revoked By</span><span class="ei-v">Sarah Johnson (Company Admin)</span></div>
-          <div class="ei-row"><span class="ei-k">Date</span><span class="ei-v">Jun 20, 2026</span></div>
-        </div>
-        <p>If you have questions about this decision, please reach out to your Partner Manager <strong>Alex Chen</strong> at alex.chen@aerolabs.com.</p>
+        <p>What this means for you:</p>
+        <ul>
+          <li>You will no longer be able to view or manage this customer's account configuration.</li>
+          <li>If you believe this is an error or if you still require access to complete outstanding tasks, please reach out to Dialpad Partner Support for additional assistance.</li>
+        </ul>
+        <p>If you have any questions or require assistance, please reach out to Dialpad Support at support@dialpad.com.</p>
+        <p>Best regards,<br/>The Dialpad Partner Team<br/>Unified Delivery Portal (UDP)</p>
       </div>
       <div class="email-foot">© 2026 Dialpad, Inc. &nbsp;·&nbsp; <a href="#">Manage notifications</a></div>
     </div>
@@ -1425,6 +1555,7 @@
     <div class="app-sidebar">
       <div class="sl"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg></div>
       <div class="si active"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg></div>
+      <div class="si" onclick="goToScreen('pm','team')" title="Team"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
       <div class="sb"><div class="av">AC</div></div>
     </div>
     <div class="app-main">
@@ -1471,12 +1602,12 @@
   const allOrder = [
     'pm-1','pm-2','pm-3','pm-4','pm-5','pm-6',
     'ca-1','ca-2','ca-3','ca-4',
-    'pm-7','pm-8','pm-9',
-    'ca-5','ca-8','ca-9',
+    'pm-7','pm-8','pm-9','pm-user-granted','pm-team',
+    'ca-5','ca-8',
     'pm-10','pm-11'
   ];
-  const pmOrder = ['pm-1','pm-2','pm-3','pm-4','pm-5','pm-6','pm-7','pm-8','pm-9','pm-10','pm-11'];
-  const caOrder = ['ca-1','ca-2','ca-3','ca-4','ca-5','ca-8','ca-9'];
+  const pmOrder = ['pm-1','pm-2','pm-3','pm-4','pm-5','pm-6','pm-7','pm-8','pm-9','pm-user-granted','pm-team','pm-10','pm-11'];
+  const caOrder = ['ca-1','ca-2','ca-3','ca-4','ca-5','ca-8'];
 
   const views = { all: allOrder, pm: pmOrder, ca: caOrder };
   let currentView = 'all';
@@ -1550,6 +1681,38 @@
     const row = document.getElementById(rowId);
     if (row) row.remove();
     showToast(name + ' removed from Innovatech Solutions');
+  }
+
+  function pm9AddUsersSubmit() {
+    document.getElementById('pm9-add-users-modal').classList.remove('open');
+    showToast('Users added — roles will be assigned by your CSR');
+    setTimeout(() => goToScreen('pm', 'user-granted'), 400);
+  }
+
+  // Customer accounts Aerolabs has been approved for — drives the Team page's per-user toggles
+  const PMTEAM_APPROVED_CUSTOMERS = ['Innovatech Solutions', 'TechCorp Inc'];
+  let pmteamCurrentUser = null;
+
+  function openTeamManage(name, email, currentAccess) {
+    pmteamCurrentUser = name;
+    document.getElementById('pmteam-manage-title').textContent = 'Manage Access — ' + name;
+    document.getElementById('pmteam-manage-sub').textContent = 'Toggle which of your approved customer accounts ' + name + ' can access.';
+    const list = document.getElementById('pmteam-manage-list');
+    list.innerHTML = PMTEAM_APPROVED_CUSTOMERS.map(c => {
+      const checked = currentAccess.includes(c) ? 'checked' : '';
+      return '<div class="cust-toggle-item"><div><div class="cti-name">' + c + '</div><div class="cti-sub">' + email + '</div></div>' +
+        '<label class="switch"><input type="checkbox" ' + checked + '><span class="switch-track"></span></label></div>';
+    }).join('');
+    document.getElementById('pmteam-manage-modal').classList.add('open');
+  }
+
+  function closeTeamManage() {
+    document.getElementById('pmteam-manage-modal').classList.remove('open');
+  }
+
+  function saveTeamManage() {
+    closeTeamManage();
+    showToast('Access updated for ' + pmteamCurrentUser);
   }
 
   function ca3Submit() {
