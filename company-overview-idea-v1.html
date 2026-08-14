@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Company Overview Prototype</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/@dialpad/dialtone@latest/dist/css/dialtone.min.css"
+    />
+    <style>
+      body {
+        background: #f5f7fa;
+        color: #1f2937;
+        font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      .prototype-shell {
+        max-width: 1280px;
+        margin: 32px auto;
+        padding: 24px;
+        background: #ffffff;
+        border-radius: 16px;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+      }
+
+      /* Company header */
+      .company-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding-bottom: 24px;
+        border-bottom: 1px solid #e5e7eb;
+        margin-bottom: 24px;
+      }
+
+      .company-identity {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .company-logo {
+        width: 56px;
+        height: 56px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #7c3aed, #2563eb);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-weight: 700;
+        font-size: 22px;
+        flex-shrink: 0;
+      }
+
+      .company-name-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .company-name {
+        font-size: 24px;
+        font-weight: 700;
+        line-height: 1.2;
+      }
+
+      .edit-pencil {
+        width: 28px;
+        height: 28px;
+        border-radius: 6px;
+        border: 1px solid #e5e7eb;
+        background: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: #6b7280;
+        font-size: 13px;
+      }
+
+      .edit-pencil:hover {
+        background: #f8fafc;
+        color: #2563eb;
+      }
+
+      .company-meta {
+        margin-top: 4px;
+        color: #6b7280;
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .plan-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        background: #ede9fe;
+        color: #6d28d9;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+      }
+
+      /* Status alerts */
+      .status-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 28px;
+      }
+
+      .status-chip {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 14px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 600;
+        border: 1px solid transparent;
+      }
+
+      .status-chip.warning {
+        background: #fffbeb;
+        border-color: #fde68a;
+        color: #92400e;
+      }
+
+      .status-chip.info {
+        background: #eff6ff;
+        border-color: #bfdbfe;
+        color: #1e40af;
+      }
+
+      .status-chip .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+
+      .status-chip.warning .dot {
+        background: #d97706;
+      }
+
+      .status-chip.info .dot {
+        background: #2563eb;
+      }
+
+      .status-chip a {
+        color: inherit;
+        text-decoration: underline;
+        font-weight: 700;
+      }
+
+      /* Section headings */
+      .section-title {
+        font-size: 15px;
+        font-weight: 700;
+        margin-bottom: 14px;
+        color: #111827;
+      }
+
+      /* Stat tiles */
+      .stat-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-bottom: 32px;
+      }
+
+      .stat-tile {
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 18px;
+        background: #fafafa;
+      }
+
+      .stat-tile .stat-label {
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: #6b7280;
+        margin-bottom: 8px;
+      }
+
+      .stat-tile .stat-value {
+        font-size: 28px;
+        font-weight: 700;
+        color: #111827;
+        line-height: 1.1;
+      }
+
+      .stat-tile .stat-sub {
+        margin-top: 6px;
+        font-size: 12px;
+        color: #6b7280;
+      }
+
+      .stat-tile.license .stat-sub {
+        color: #16a34a;
+        font-weight: 600;
+      }
+
+      .progress-track {
+        margin-top: 10px;
+        height: 6px;
+        border-radius: 999px;
+        background: #e5e7eb;
+        overflow: hidden;
+      }
+
+      .progress-fill {
+        height: 100%;
+        border-radius: 999px;
+        background: #2563eb;
+      }
+
+      /* Recent activity */
+      .activity-card {
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        overflow: hidden;
+      }
+
+      .activity-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 14px 16px;
+        border-bottom: 1px solid #f1f5f9;
+      }
+
+      .activity-row:last-child {
+        border-bottom: none;
+      }
+
+      .activity-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: #e0e7ff;
+        color: #4338ca;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 700;
+        flex-shrink: 0;
+      }
+
+      .activity-text {
+        font-size: 13.5px;
+        color: #1f2937;
+        line-height: 1.5;
+      }
+
+      .activity-text b {
+        font-weight: 700;
+      }
+
+      .activity-time {
+        margin-left: auto;
+        font-size: 12px;
+        color: #9ca3af;
+        white-space: nowrap;
+        padding-top: 2px;
+      }
+
+      .prototype-note {
+        margin-top: 28px;
+        padding: 12px 16px;
+        border-radius: 10px;
+        background: #f8fafc;
+        border: 1px dashed #cbd5e1;
+        font-size: 12.5px;
+        color: #6b7280;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="prototype-shell">
+      <!-- Company header -->
+      <div class="company-header">
+        <div class="company-identity">
+          <div class="company-logo">AC</div>
+          <div>
+            <div class="company-name-row">
+              <div class="company-name">Acme Corp</div>
+              <button class="edit-pencil" title="Edit company name">✎</button>
+            </div>
+            <div class="company-meta">
+              <span class="plan-badge">★ Enterprise Plan</span>
+              <span>·</span>
+              <span>Company ID: 48213</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Status alerts -->
+      <div class="status-row">
+        <div class="status-chip warning">
+          <span class="dot"></span>
+          CNAM is not verified — <a href="#">review settings</a>
+        </div>
+        <div class="status-chip warning">
+          <span class="dot"></span>
+          3 offices have no assigned business unit
+        </div>
+        <div class="status-chip info">
+          <span class="dot"></span>
+          License renewal in 21 days
+        </div>
+      </div>
+
+      <!-- Stat tiles -->
+      <div class="section-title">At a glance</div>
+      <div class="stat-grid">
+        <div class="stat-tile">
+          <div class="stat-label">Users</div>
+          <div class="stat-value">1,248</div>
+          <div class="stat-sub">+32 this month</div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-label">Business Units</div>
+          <div class="stat-value">14</div>
+          <div class="stat-sub">across 6 offices</div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-label">Offices</div>
+          <div class="stat-value">6</div>
+          <div class="stat-sub">2 countries</div>
+        </div>
+        <div class="stat-tile license">
+          <div class="stat-label">Licenses used</div>
+          <div class="stat-value">1,180 / 1,300</div>
+          <div class="progress-track">
+            <div class="progress-fill" style="width: 91%"></div>
+          </div>
+          <div class="stat-sub">91% utilized</div>
+        </div>
+      </div>
+
+      <!-- Recent activity -->
+      <div class="section-title">Recent activity</div>
+      <div class="activity-card">
+        <div class="activity-row">
+          <div class="activity-avatar">JD</div>
+          <div class="activity-text">
+            <b>Jane Doe</b> updated IVR settings for <b>Sales Line</b>
+          </div>
+          <div class="activity-time">2 hours ago</div>
+        </div>
+        <div class="activity-row">
+          <div class="activity-avatar">MK</div>
+          <div class="activity-text">
+            <b>Mike Kim</b> added a new business unit <b>APAC Support</b>
+          </div>
+          <div class="activity-time">Yesterday</div>
+        </div>
+        <div class="activity-row">
+          <div class="activity-avatar">SR</div>
+          <div class="activity-text">
+            <b>Suraj R.</b> uploaded a new company logo
+          </div>
+          <div class="activity-time">2 days ago</div>
+        </div>
+        <div class="activity-row">
+          <div class="activity-avatar">AL</div>
+          <div class="activity-text">
+            <b>Amy Lee</b> enabled queue prioritization for <b>Support Team</b>
+          </div>
+          <div class="activity-time">4 days ago</div>
+        </div>
+      </div>
+
+      <div class="prototype-note">
+        Prototype only — data is mocked. Not wired to the app-admin codebase.
+      </div>
+    </div>
+  </body>
+</html>
