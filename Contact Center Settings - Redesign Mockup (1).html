@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Contact Center Settings — Redesign Mockup</title>
+<style>
+:root{--brand:#7C52FF;--brand-soft:#F1ECFF;--ink:#1A1A2E;--muted:#6B6B7B;--line:#E7E7EE;--bg:#F6F6F9;--ok:#1D9E75;--ok-soft:#E1F5EE;--warn:#BA7517;--warn-soft:#FAEEDA;--info:#185FA5;--info-soft:#E6F1FB;}
+*{box-sizing:border-box;}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg);font-size:14px;line-height:1.5;}
+.wrap{max-width:1000px;margin:0 auto;padding:24px;}
+.bar{font-size:12px;color:var(--muted);margin-bottom:10px;}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;}
+.hd{padding:20px 24px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:14px;}
+.avatar{width:42px;height:42px;border-radius:10px;background:var(--brand-soft);color:var(--brand);display:flex;align-items:center;justify-content:center;font-weight:700;}
+.hd h1{font-size:18px;margin:0;}
+.hd p{margin:2px 0 0;color:var(--muted);font-size:13px;}
+.search{margin-left:auto;border:1px solid var(--line);border-radius:9px;padding:8px 12px;color:var(--muted);font-size:13px;min-width:230px;display:flex;gap:8px;align-items:center;}
+.tabs{display:flex;flex-wrap:wrap;gap:2px;padding:8px 16px 0;border-bottom:1px solid var(--line);background:#fcfcfe;}
+.tab{padding:10px 14px;font-size:13px;color:var(--muted);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;border-radius:6px 6px 0 0;}
+.tab:hover{color:var(--ink);background:#f3f1fb;}
+.tab.active{color:var(--brand);border-bottom-color:var(--brand);font-weight:600;}
+.body{padding:24px;}
+.panel{display:none;}
+.panel.show{display:block;}
+.sec{margin-bottom:26px;}
+.sec h2{font-size:13px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin:0 0 12px;font-weight:700;}
+.row{display:flex;justify-content:space-between;gap:18px;padding:14px 0;border-bottom:1px solid var(--line);}
+.row:last-child{border-bottom:none;}
+.row .lbl{font-weight:600;}
+.row .desc{color:var(--muted);font-size:13px;margin-top:2px;max-width:560px;}
+.ctl{flex-shrink:0;display:flex;align-items:center;gap:10px;}
+input[type=text],select{border:1px solid var(--line);border-radius:9px;padding:8px 11px;font-size:14px;font-family:inherit;color:var(--ink);background:#fff;}
+.toggle{width:40px;height:23px;border-radius:99px;background:#d7d7e0;position:relative;cursor:pointer;}
+.toggle.on{background:var(--brand);}
+.toggle i{position:absolute;top:2px;left:2px;width:19px;height:19px;border-radius:50%;background:#fff;transition:.15s;}
+.toggle.on i{left:19px;}
+.chip{font-size:12px;font-weight:600;padding:3px 9px;border-radius:7px;display:inline-flex;align-items:center;gap:5px;}
+.chip.inherit{background:var(--info-soft);color:var(--info);}
+.chip.data{background:var(--brand-soft);color:var(--brand);}
+.seg{display:flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;}
+.seg button{border:none;background:#fff;padding:7px 13px;font-size:13px;cursor:pointer;color:var(--muted);border-right:1px solid var(--line);}
+.seg button:last-child{border-right:none;}
+.seg button.sel{background:var(--brand);color:#fff;font-weight:600;}
+.adv{margin-top:8px;}
+.adv summary{cursor:pointer;color:var(--brand);font-size:13px;font-weight:600;list-style:none;padding:6px 0;}
+.adv summary::-webkit-details-marker{display:none;}
+.adv summary:before{content:"⌄ ";font-weight:700;}
+.note{background:var(--warn-soft);color:var(--warn);font-size:13px;padding:10px 14px;border-radius:9px;margin-bottom:16px;}
+.alertrow{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;}
+.alertrow .when{flex:1;}
+.addbtn{border:1px dashed var(--line);border-radius:10px;padding:11px;width:100%;color:var(--brand);background:#fff;font-weight:600;cursor:pointer;font-size:13px;}
+.pillrow{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;}
+.pill{background:#f3f1fb;border:1px solid var(--line);border-radius:7px;padding:4px 9px;font-size:12px;}
+.save{position:sticky;bottom:0;background:#fff;border-top:1px solid var(--line);padding:14px 24px;display:flex;justify-content:flex-end;gap:10px;}
+.btn{border-radius:9px;padding:9px 18px;font-size:14px;font-weight:600;cursor:pointer;border:1px solid var(--line);background:#fff;}
+.btn.pri{background:var(--brand);color:#fff;border-color:var(--brand);}
+.legend{font-size:12px;color:var(--muted);margin-top:14px;display:flex;gap:16px;flex-wrap:wrap;}
+.legend b{color:var(--ink);}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="bar">Dialpad · Admin · Contact Centers · <b>test Lang</b> &nbsp;—&nbsp; <span style="color:var(--brand);font-weight:600;">Redesign mockup (proposed)</span></div>
+<div class="card">
+  <div class="hd">
+    <div class="avatar">TL</div>
+    <div><h1>test Lang</h1><p>Contact center · 3 members · Active</p></div>
+    <div class="search">🔍 Search every setting…</div>
+  </div>
+  <div class="tabs" id="tabs"></div>
+  <div class="body" id="body"></div>
+  <div class="save"><button class="btn">Cancel</button><button class="btn pri">Save changes</button></div>
+</div>
+<div class="legend">
+  <span><b>Auto-saves</b> per change</span>
+  <span><span class="chip inherit">Inherited</span> managed at office level — read-only here</span>
+  <span><span class="chip data">Data</span> lives outside settings</span>
+</div>
+</div>
+<script>
+function tog(e){e.currentTarget.classList.toggle('on');}
+function seg(e){[...e.currentTarget.parentNode.children].forEach(b=>b.classList.remove('sel'));e.currentTarget.classList.add('sel');}
+const T=(lbl,desc,ctl,extra='')=>`<div class="row"><div><div class="lbl">${lbl}</div>${desc?`<div class="desc">${desc}</div>`:''}${extra}</div><div class="ctl">${ctl}</div></div>`;
+const TG=(on)=>`<div class="toggle ${on?'on':''}" onclick="tog(event)"><i></i></div>`;
+const SEL=(opts,sel)=>`<select>${opts.map(o=>`<option ${o===sel?'selected':''}>${o}</option>`).join('')}</select>`;
+const SCOPE=(sel)=>`<div class="seg">${['None','Own calls','All calls'].map(o=>`<button class="${o===sel?'sel':''}" onclick="seg(event)">${o}</button>`).join('')}</div>`;
+const SEC=(t,rows)=>`<div class="sec"><h2>${t}</h2>${rows}</div>`;
+const ADV=(rows)=>`<details class="adv"><summary>Show advanced</summary>${rows}</details>`;
+
+const panels={
+Overview:
+ SEC('Identity',
+  T('Name','The name admins see in the contact center list.','<input type="text" value="test Lang" style="width:240px">')+
+  T('Abbreviation','Short code shown in compact lists. Optional.','<input type="text" value="ABBR" style="width:120px">')+
+  T('Default language','Sets IVR, voicemail, and (where supported) AI language.',SEL(['English (US)','English (UK)','French','Spanish'],'English (US)'))+
+  T('Description','A short note about what this contact center is for.','<input type="text" placeholder="Add a description" style="width:240px">'))
+ +SEC('Numbers &amp; caller ID',
+  T('Phone numbers','3 numbers attached. Toll-free, local/SMS, fax.','<button class="btn">Manage</button>')+
+  T('Outbound caller ID','What customers see when agents call out.',SEL(['Contact center number','Local presence'],'Contact center number'))
+  +ADV(T('Local presence','Let agents toggle local-presence dialing on and off.',TG(false))+
+       T('Fax cover sheet','Rarely used. Upload only if you still send faxes.','<button class="btn">Upload</button>'))),
+
+'People &amp; Permissions':
+ SEC('Members',
+  T('People in this contact center','Chandana C K, Jeeva Sundar Raj, Sandhya Shanbhag.','<button class="btn">+ Add people</button>'))
+ +SEC('Supervisor permissions',
+  T('Monitor live calls','Let admins and supervisors listen in.',TG(true))+
+  T('Change agent active state','Let supervisors flip agents available/unavailable.',TG(false))+
+  T('See all scorecards','View scorecards graded by other supervisors.',TG(false))+
+  T('Assign queued calls','Route specific calls to specific agents.',TG(false)))
+ +SEC('Agent permissions',
+  T('Recording access','What agents can see of call recordings &amp; summaries.',SCOPE('Own calls'))+
+  T('Delete access','What agents can delete (recordings, transcripts, VMs).',SCOPE('None'))+
+  T('Change own availability','Let agents set themselves available/unavailable.',TG(true))+
+  T('Wrap-up time','Give agents time after a call before the next one.','<span style="color:var(--muted);font-size:13px">20s</span>&nbsp;'+TG(true))
+  +ADV(T('View live dashboard','Let agents see the contact center dashboard.',TG(false))+
+       T('Auto-unavailable after missed calls','Set unavailable after N missed calls.','<span style="color:var(--muted);font-size:13px">3</span>&nbsp;'+TG(false))+
+       T('Notify when supervisor is listening','Show agents when they\'re being monitored.',TG(false)))),
+
+'Hours &amp; Routing':
+ SEC('Business hours',
+  T('When you take calls','24/7, or set specific hours with overnight &amp; breaks.',SEL(['Always (24/7)','Specific hours'],'Always (24/7)'))+
+  T('Timezone','',SEL(['(GMT-07:00) US/Pacific','(GMT-05:00) US/Eastern'],'(GMT-07:00) US/Pacific'))+
+  T('Holiday hours','Date-based overrides. 1 holiday set.','<button class="btn">Manage</button>'))
+ +SEC('Routing',
+  T('Route to last agent first','Send repeat callers to the agent who last helped them.',TG(true))+
+  T('Open-hours routing','How calls are distributed to available agents.',SEL(['Longest idle','Round robin','Most skilled','Simultaneous'],'Longest idle'))+
+  T('Queue prioritization','','',`<div class="pillrow"><span class="chip inherit">Inherited from office</span></div>`))
+ +SEC('Failover — what happens when we can\'t take the call',
+  T('Failover number','PSTN number used if Dialpad has an outage.','<input type="text" value="(628) 688-6775" style="width:170px">')+
+  T('AI agent fallback','Where sessions go when AI agents are offline.',SEL(['Voicemail','Operators','Router','Team member'],'Voicemail'))+
+  T('Call queue failover','Use the failover app during a major outage.',TG(false))),
+
+'AI &amp; Coaching':
+ `<div class="row"><div><div class="lbl">Allow AI in this contact center</div><div class="desc">Master switch for Dialpad AI. Off disables everything below.</div></div><div class="ctl">${TG(true)}</div></div>`
+ +SEC('AI behavior',
+  T('Auto-start AI on calls','Begin transcription &amp; assist automatically.',TG(true))+
+  T('Let agents start/stop AI','Allow agents to toggle AI mid-call.',TG(true))
+  +ADV(T('Auto-open live transcript','Open the transcript panel when a call starts.',TG(true))+
+       T('Improve AI from these conversations','Use anonymized calls to improve AI quality.',TG(true))))
+ +SEC('Coaching',
+  T('Playbooks','Real-time guidance frameworks.','',`<div class="pillrow"><span class="pill">Challenger</span><span class="pill">MEDDIC</span><span class="pill">SPICED</span><span class="pill">SPIN</span></div>`)+
+  T('Coach cards','Live prompts triggered by keyphrases.','',`<div class="pillrow"><span class="pill">Using a competitor</span><span class="pill">+1</span></div>`)+
+  T('Custom moments','Tracked post-call &amp; in analytics.','',`<div class="pillrow"><span class="pill">Budget</span><span class="pill">Authority</span><span class="pill">Timing</span><span class="pill">+5</span></div>`)+
+  T('AI Assistant','Deploy an AI assistant to this contact center.',SEL(['Disabled','Support Assistant','Sales Assistant'],'Disabled'))),
+
+'Recording &amp; Compliance':
+ SEC('Recording &amp; transcription',
+  T('Recording mode','Applies to inbound and outbound (toggle below).',SEL(['Off','Record & transcribe','Record except exceptions','Manual','Transcribe only'],'Off'))+
+  T('Applies to','Switch between inbound and outbound rules.','<div class="seg"><button class="sel" onclick="seg(event)">Inbound</button><button onclick="seg(event)">Outbound</button></div>')+
+  T('Recording greeting','Played when recording or transcription is on.','<button class="btn">Edit greeting</button>')
+  +ADV(T('Also record agent screens','Capture the agent\'s screen with the call.',TG(false))+
+       T('Greeting scope','Play for all calls, or skip one-party-consent states.',SEL(['All calls','All except one-party-consent'],'All calls'))+
+       T('Let agents pause recording','Allow pause/restart mid-call.',TG(false))))
+ +SEC('Privacy',
+  T('PII redaction','Remove sensitive data from transcripts &amp; recordings.',TG(false),`<div class="pillrow"><span class="pill">Card number</span><span class="pill">CVV</span><span class="pill">SSN</span></div>`)+
+  T('Retention policy','How long call data is kept before cleanup.',SEL(['None','Cleanup & archive','Remove content','Remove content & PII'],'None'))+
+  T('Backup rules','','',`<div class="pillrow"><span class="chip inherit">Inherited from office</span></div>`)),
+
+'Customer Experience':
+ SEC('Greetings &amp; messages',
+  T('Voicemail greeting','Played when a caller reaches voicemail.','<button class="btn">Record / upload</button>')+
+  T('Disconnect message','Played before hang-up when no agent is available.','<button class="btn">Record / upload</button>'))
+ +SEC('Surveys &amp; logging',
+  T('CSAT survey','','',`<div class="pillrow"><span class="chip inherit">Inherited from office</span></div>`)+
+  T('Call dispositions','Ask agents to log call outcomes from the office list.',TG(true))+
+  T('SMS/MMS auto-reply','','',`<div class="pillrow"><span class="chip inherit">Inherited from office</span></div>`))
+ +SEC('Spam &amp; blocking',
+  T('Block high spam-score callers','Send likely spam to voicemail and the spam tab.',TG(true))+
+  T('Block anonymous callers','Send callers with no caller ID to voicemail.',TG(false))+
+  T('Block first-time callers','Send callers who\'ve never called before to voicemail.',TG(false))),
+
+Alerts:
+ `<div class="sec"><h2>Alert rules</h2>
+ <div class="alertrow"><div class="when"><b>Service level</b> drops below <b>95%</b> (answered within 60s)</div>${TG(true)}</div>
+ <div class="alertrow"><div class="when"><b>Call queue</b> reaches <b>50</b> callers</div>${TG(false)}</div>
+ <div class="alertrow"><div class="when"><b>Longest wait</b> exceeds <b>15 min</b></div>${TG(false)}</div>
+ <div class="alertrow"><div class="when"><b>No agents</b> on duty during open hours</div>${TG(false)}</div>
+ <div class="alertrow"><div class="when"><b>No agents</b> logged in during open hours</div>${TG(false)}</div>
+ <button class="addbtn">+ Add an alert rule</button>
+ ${ADV(T('Short-abandoned threshold','Calls dropped under this count as short-abandoned.','<span style="color:var(--muted);font-size:13px">10s</span>'))}
+ </div>`,
+
+Integrations:
+ `<div class="note">Integrations marked "office level" are managed by your office admin and shown here read-only.</div>`
+ +SEC('Connected',
+  T('Salesforce','Screen pop on incoming calls.',TG(true))+
+  T('HubSpot','Screen pop on incoming calls.',TG(true))+
+  T('Zendesk','Screen pop on incoming calls.',TG(false)))
+ +SEC('Screen pop',
+  T('Launch a URL on call events','Open a browser tab with call data on ring/answer.',TG(true)))
+ +`<div style="margin-top:8px"><span class="chip inherit">8 more managed at office level</span></div>`,
+};
+
+const keys=Object.keys(panels);
+const tabs=document.getElementById('tabs');
+const body=document.getElementById('body');
+keys.forEach((k,i)=>{
+  const b=document.createElement('button');b.className='tab'+(i===0?' active':'');b.innerHTML=k;
+  b.onclick=()=>{document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));b.classList.add('active');render(k);};
+  tabs.appendChild(b);
+});
+function render(k){body.innerHTML=`<div class="panel show">${panels[k]}</div>`;}
+render(keys[0]);
+</script>
+</body>
+</html>
