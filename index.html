@@ -283,7 +283,7 @@ function paint(){document.querySelectorAll('.tval').forEach(e=>e.textContent=TYP
  document.querySelectorAll('.cval').forEach(e=>{e.textContent=PARTNER||(e.classList.contains('lk')?'None selected':'Select partner');e.classList.toggle('ph',!PARTNER)});
  document.querySelectorAll('.opt').forEach(o=>o.querySelector('.ck').style.visibility=o.dataset.type===TYPE?'visible':'hidden');
  document.querySelectorAll('.copt').forEach(o=>o.querySelector('.ck').style.visibility=(o.dataset.company===PARTNER)?'visible':'hidden');
- const ws=TYPE==='wholesaler'&&!!PARTNER,tm=TYPE==='reseller'&&(PARTNER==='T-Mobile'||PARTNER==='Softbank');
+ const ws=TYPE==='wholesaler'&&!!PARTNER,tm=TYPE==='reseller'&&!!PARTNER;
  [['nav-reports',TYPE==='wholesaler'],['btn-reports',ws],['btn-create',ws||tm]].forEach(([id,show])=>{const e=document.getElementById(id);if(e)e.style.display=show?'':'none'});
  rewrite()}
 function notify(){subs.forEach(f=>f(TYPE,PARTNER))}

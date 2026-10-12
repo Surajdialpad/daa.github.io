@@ -317,6 +317,45 @@ body{background:var(--dt-color-surface-secondary)}
 <div class="mtext"><label>System Integrator Contact's Name</label><input class="d-input d-input--md" type="text"></div><div class="mtext"><label>System Integrator Contact Phone #</label><input class="d-input d-input--md" type="text"></div>
 <div class="mtext"><label>Memo from System Integrator</label><textarea class="d-input"></textarea></div>
 <div class="es-actions" style="margin-top:18px"><button type="button" class="d-btn d-btn--primary d-btn--md" id="sb_submit"><span class="d-btn__label">Create Account</span></button></div>
+</form></div></div><div id="reseller-create" class="hid"><style>
+.mf{max-width:760px}.mfw{max-width:1000px}
+.mf .mrow,.mf .mtext{margin:0 0 16px}
+.mf .mtext label,.mf .ml{display:block;font-weight:600;font-size:14px;margin-bottom:6px}
+.mf .mtext .d-input{width:100%}
+.mf .mrow{display:flex;align-items:center;gap:16px}
+.mf .mrow .ml{margin:0;min-width:230px}
+.mf .mrow .d-select{flex:1}
+.mf .lic{margin:0 0 16px}
+.mf .lic>.ml{margin-bottom:10px}
+.mf .lic .grid{display:flex;flex-wrap:wrap;gap:14px 20px}
+.mf .mcnt label{display:block;font-size:13px;margin-bottom:4px}
+.mf .mcnt .d-input{width:150px}
+.mf .es-actions{justify-content:flex-start}
+</style>
+<div class="mf">
+<div id="r-error" class="errtxt"><aside class="d-notice d-notice--critical" role="status"><div class="d-notice__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v5h1"/></svg></div><div class="d-notice__content"><div class="d-notice__title">Could not create the account</div><div class="d-notice__message">Invalid license type.</div></div></aside></div>
+<div id="r-ok" class="okbanner"><aside class="d-notice d-notice--success" role="status"><div class="d-notice__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v5h1"/></svg></div><div class="d-notice__content"><div class="d-notice__title">Done</div><div class="d-notice__message">Account created (mock). In production the reseller is taken to the new company's page. <a href='index.html'>Back to Companies</a></div></div></aside></div>
+<div class="loading" id="r-loading"><div class="spin" aria-label="Loading"></div></div>
+<form id="rform" onsubmit="return false">
+<div class="mtext"><label>Customer Domain</label><input class="d-input d-input--md" type="text"></div>
+<div class="mtext"><label>Company Name</label><input class="d-input d-input--md" type="text"></div>
+<div class="mtext"><label>Customer Admin Email</label><input class="d-input d-input--md" type="email"></div>
+<div class="mtext"><label>Postal Code</label><input class="d-input d-input--md" type="text"></div>
+<div class="mrow"><label class="ml">Payment Interval:</label><div class="d-select d-select--md"><select class="d-select__input" id="r_bill"><option value="monthly">Month To Month</option><option value="yearly">Pre-Bill Annual</option><option value="annual_commit">Annual Billed Monthly</option></select></div></div>
+<div class="mrow"><label class="ml">Mobile Verification:</label><div class="d-select d-select--md"><select class="d-select__input" id="r_mv"><option value="true">Enable Mobile Verification</option><option value="false">Disable Mobile Verification</option></select></div></div>
+<div class="mrow"><label class="ml">Country and Currency:</label><div class="d-select d-select--md"><select class="d-select__input" id="r_country"><option value="us">US / USD</option><option value="ca">CA / CAD</option><option value="au">AU / AUD</option><option value="nz">NZ / NZD</option></select></div></div>
+<div class="mrow"><label class="ml">Company SKU:</label><div class="d-select d-select--md"><select class="d-select__input" id="r_sku"><option value="default">Standard</option><option value="pro">Pro</option><option value="enterprise">Enterprise</option></select></div></div>
+<div class="mrow"><label class="ml">Initial Account State:</label><div class="d-select d-select--md"><select class="d-select__input" id="r_state"><option value="trial">Trial</option><option value="paid">Paid</option></select></div></div>
+<div class="mrow"><label class="ml">Trial Duration:</label><input class="d-input d-input--md" style="width:90px;flex:none" type="number" value="14"></div>
+<div class="mrow"><label class="ml">Enable International Calling:</label><div class="d-select d-select--md"><select class="d-select__input" id="r_intl"><option value="false">Enable Later</option><option value="true">Enable Now</option></select></div></div>
+<div class="lic"><label class="ml">License Counts:</label><div class="grid"><div class="mcnt"><label for="r_lines">Dialpad Connect</label><input class="d-input d-input--md" type="number" id="r_lines" value="0"></div><div class="mcnt"><label for="r_agents">Dialpad Sell</label><input class="d-input d-input--md" type="number" id="r_agents" value="0"></div><div class="mcnt"><label for="r_cc">Dialpad Contact Center</label><input class="d-input d-input--md" type="number" id="r_cc" value="0"></div><div class="mcnt"><label for="r_room">Local Room</label><input class="d-input d-input--md" type="number" id="r_room" value="0"></div><div class="mcnt"><label for="r_sms">Mobile Unlimited SMS Add-on</label><input class="d-input d-input--md" type="number" id="r_sms" value="0"></div><div class="mcnt reg"><label for="r_tfroom">Tollfree Rooms</label><input class="d-input d-input--md" type="number" id="r_tfroom" value="0"></div><div class="mcnt"><label for="r_group">Additional Numbers</label><input class="d-input d-input--md" type="number" id="r_group" value="0"></div><div class="mcnt reg"><label for="r_tfgroup">Additional Tollfree Numbers</label><input class="d-input d-input--md" type="number" id="r_tfgroup" value="0"></div><div class="mcnt reg"><label for="r_fax">Fax Lines</label><input class="d-input d-input--md" type="number" id="r_fax" value="0"></div><div class="mcnt"><label for="r_uc">UberConference Local</label><input class="d-input d-input--md" type="number" id="r_uc" value="0"></div><div class="mcnt"><label for="r_uctf">UberConference Tollfree</label><input class="d-input d-input--md" type="number" id="r_uctf" value="0"></div></div></div>
+<div class="mrow"><label class="ml">Admin user license type:</label><div class="d-select d-select--md"><select class="d-select__input" id="r_admin"><option value="" selected>First available license</option><option value="lines" disabled>Dialpad Connect</option><option value="agents" disabled>Dialpad Sell</option><option value="cc" disabled>Dialpad Contact Center</option></select></div></div>
+<div class="lic"><label class="ml">Price per Month:</label><div class="grid"><div class="mcnt"><label for="p_lines">Dialpad Connect</label><input class="d-input d-input--md" type="number" id="p_lines" value="0.00" step="0.01"></div><div class="mcnt"><label for="p_agents">Dialpad Sell</label><input class="d-input d-input--md" type="number" id="p_agents" value="0.00" step="0.01"></div><div class="mcnt"><label for="p_cc">Dialpad Contact Center</label><input class="d-input d-input--md" type="number" id="p_cc" value="0.00" step="0.01"></div><div class="mcnt"><label for="p_room">Local Room</label><input class="d-input d-input--md" type="number" id="p_room" value="0.00" step="0.01"></div><div class="mcnt"><label for="p_sms">Mobile Unlimited SMS Add-on</label><input class="d-input d-input--md" type="number" id="p_sms" value="0.00" step="0.01"></div><div class="mcnt reg"><label for="p_tfroom">Tollfree Rooms</label><input class="d-input d-input--md" type="number" id="p_tfroom" value="0.00" step="0.01"></div><div class="mcnt"><label for="p_group">Additional Numbers</label><input class="d-input d-input--md" type="number" id="p_group" value="0.00" step="0.01"></div><div class="mcnt reg"><label for="p_tfgroup">Additional Tollfree Numbers</label><input class="d-input d-input--md" type="number" id="p_tfgroup" value="0.00" step="0.01"></div><div class="mcnt reg"><label for="p_fax">Fax Lines</label><input class="d-input d-input--md" type="number" id="p_fax" value="0.00" step="0.01"></div><div class="mcnt"><label for="p_uc">UberConference Local</label><input class="d-input d-input--md" type="number" id="p_uc" value="0.00" step="0.01"></div><div class="mcnt"><label for="p_uctf">UberConference Tollfree</label><input class="d-input d-input--md" type="number" id="p_uctf" value="0.00" step="0.01"></div></div></div>
+<div class="es-ack">
+  <label><input type="checkbox" id="rack1"><span>By submitting this Order through the Reseller Portal, the Order shall be deemed accepted by Reseller upon submission and shall be governed by the terms and conditions set forth in the Reseller Partner Agreement Exhibit A.</span></label>
+  <label><input type="checkbox" id="rack2"><span>AI Agent Managed Service: Please note that for AI Agent credits to be sold, Dialpad requires the involvement of the Dialpad CX organization to build, iterate, and optimize the AI Agent over the course of the customer's contract.</span></label>
+</div>
+<div class="es-actions"><span id="rwrap" title="Please accept the terms and acknowledge AI Agent Managed Service to create account"><button type="button" class="d-btn d-btn--primary d-btn--md" id="rsubmit" disabled aria-disabled="true"><span class="d-btn__label">Create Account</span></button></span></div>
 </form></div></div><div id="tmobile-create" class="hid">
 <style>
 .mf{max-width:760px}
@@ -377,7 +416,7 @@ function paint(){document.querySelectorAll('.tval').forEach(e=>e.textContent=TYP
  document.querySelectorAll('.cval').forEach(e=>{e.textContent=PARTNER||(e.classList.contains('lk')?'None selected':'Select partner');e.classList.toggle('ph',!PARTNER)});
  document.querySelectorAll('.opt').forEach(o=>o.querySelector('.ck').style.visibility=o.dataset.type===TYPE?'visible':'hidden');
  document.querySelectorAll('.copt').forEach(o=>o.querySelector('.ck').style.visibility=(o.dataset.company===PARTNER)?'visible':'hidden');
- const ws=TYPE==='wholesaler'&&!!PARTNER,tm=TYPE==='reseller'&&(PARTNER==='T-Mobile'||PARTNER==='Softbank');
+ const ws=TYPE==='wholesaler'&&!!PARTNER,tm=TYPE==='reseller'&&!!PARTNER;
  [['nav-reports',TYPE==='wholesaler'],['btn-reports',ws],['btn-create',ws||tm]].forEach(([id,show])=>{const e=document.getElementById(id);if(e)e.style.display=show?'':'none'});
  rewrite()}
 function notify(){subs.forEach(f=>f(TYPE,PARTNER))}
@@ -423,13 +462,14 @@ sb.addEventListener('click',()=>{$('#error-msg').classList.remove('show');$('#lo
 
 
 applySku(); updatePrices(); upd();
-__regRes((t,p)=>{const ws=t==='wholesaler'&&!!p,tm=t==='reseller'&&p==='T-Mobile',sb=t==='reseller'&&p==='Softbank';
+__regRes((t,p)=>{const ws=t==='wholesaler'&&!!p,tm=t==='reseller'&&p==='T-Mobile',sb=t==='reseller'&&p==='Softbank',rs=t==='reseller'&&!!p&&p!=='T-Mobile'&&p!=='Softbank';
  document.getElementById('wholesale-create').classList.toggle('hid',!ws);
  document.getElementById('tmobile-create').classList.toggle('hid',!tm);
  document.getElementById('softbank-create').classList.toggle('hid',!sb);
- const na=document.getElementById('pt-na');na.classList.toggle('hid',ws||tm||sb);
- if(!(ws||tm||sb)){na.querySelector('.d-notice__message').textContent=!p?'Select a partner on the Companies page first.':'Creating customer accounts is not available for this partner in this prototype.'}
- document.getElementById('pgtitle').textContent=ws?'Create new company for '+p:(tm?'Create new trial company for T-Mobile':(sb?'Create new company':'Create customer account'))});
+ document.getElementById('reseller-create').classList.toggle('hid',!rs);
+ const na=document.getElementById('pt-na');na.classList.toggle('hid',ws||tm||sb||rs);
+ if(!(ws||tm||sb||rs)){na.querySelector('.d-notice__message').textContent=!p?'Select a partner on the Companies page first.':'Creating customer accounts is not available for this partner in this prototype.'}
+ document.getElementById('pgtitle').textContent=ws?'Create new company for '+p:(tm?'Create new trial company for T-Mobile':(sb?'Create new company':(rs?'Create new company for '+p:'Create customer account')))});
 
 const $t=s=>document.querySelector(s);
 const OPT={lines:'#t_lines',agents:'#t_agents',lite_support_agents:'#t_cc',magenta_lines:'#t_magenta'};
@@ -460,5 +500,23 @@ tsb.addEventListener('click',()=>{const std=$t('#t_sku').value==='default';const
   let h='';for(let i=0;i<n;i++)h+=office(i);w.innerHTML=h});
  q('#sb_submit').addEventListener('click',()=>{q('#sb-error').classList.remove('show');
   q('#sb-loading').classList.add('show');setTimeout(()=>{q('#sb-loading').classList.remove('show');q('#sb-ok').classList.add('show');window.scrollTo({top:0,behavior:'smooth'})},1100)})})();
+
+(function(){const q=s=>document.querySelector(s),qa=s=>document.querySelectorAll(s);
+ const KEYS=['lines','agents','cc','room','sms','tfroom','group','tfgroup','fax','uc','uctf'];
+ const BASE={lines:[12,18,22],agents:[0,32,42],cc:[0,40,60],room:[15,20,25],sms:[2,2,2],tfroom:[25,30,35],group:[3,3,3],tfgroup:[5,5,5],fax:[8,8,8],uc:[10,10,10],uctf:[15,15,15]};
+ const FX={us:1,ca:1.35,au:1.5,nz:1.6};
+ function prices(){const i=['default','pro','enterprise'].indexOf(q('#r_sku').value),f=FX[q('#r_country').value];
+  KEYS.forEach(k=>{q('#p_'+k).value=(BASE[k][i]*f).toFixed(2)})}
+ function regional(){const on=['us','ca'].includes(q('#r_country').value);
+  qa('.mcnt.reg').forEach(e=>{e.style.display=on?'':'none';if(!on)e.querySelector('input').value=0})}
+ function admin(){const sel=q('#r_admin');['lines','agents','cc'].forEach(k=>{const o=sel.querySelector('option[value="'+k+'"]'),n=parseInt(q('#r_'+k).value||'0',10);
+  o.disabled=!(n>0);if(o.disabled&&sel.value===k)sel.value=''})}
+ ['#r_sku','#r_country','#r_bill'].forEach(s=>q(s).addEventListener('change',()=>{prices();regional()}));
+ KEYS.forEach(k=>q('#r_'+k).addEventListener('change',admin));
+ const a=q('#rack1'),b=q('#rack2'),sb=q('#rsubmit');
+ function upd(){const on=a.checked&&b.checked;sb.disabled=!on;sb.setAttribute('aria-disabled',String(!on));q('#rwrap').title=on?'':'Please accept the terms and acknowledge AI Agent Managed Service to create account'}
+ a.addEventListener('change',upd);b.addEventListener('change',upd);
+ sb.addEventListener('click',()=>{q('#r-loading').classList.add('show');setTimeout(()=>{q('#r-loading').classList.remove('show');q('#r-ok').classList.add('show');window.scrollTo({top:0,behavior:'smooth'})},1100)});
+ prices();regional();admin();upd()})();
 </script>
 </body></html>
